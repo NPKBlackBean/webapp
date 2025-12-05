@@ -1,0 +1,15 @@
+.DS_Store
+frontend/.env
+frontend/node_modules/
+
+# React Router
+frontend/.react-router/
+frontend/build/
+
+# FastAPI
+backend/.venv/
+backend/__pycache__/
+backend/*.py[cod]
+backend/.uv/
+
+.idea/
