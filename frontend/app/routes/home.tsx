@@ -1,5 +1,12 @@
+import {
+    useQuery,
+    useMutation,
+    useQueryClient,
+    QueryClient,
+    QueryClientProvider,
+} from '@tanstack/react-query'
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import Homepage from "../components/homepage";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +15,12 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+const queryClient = new QueryClient()
+
 export default function Home() {
-  return <Welcome />;
+  return (
+      <QueryClientProvider client={queryClient}>
+        <Homepage />
+      </QueryClientProvider>
+  );
 }
