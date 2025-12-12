@@ -8,8 +8,8 @@ frontend/build/
 
 # FastAPI
 backend/.venv/
-backend/__pycache__/
 backend/*.py[cod]
 backend/.uv/
+**/__pycache__/
 
 .idea/

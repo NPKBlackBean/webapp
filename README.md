@@ -1,4 +1,15 @@
 ## CoolBeans Web App
+### Run the app
+1. Execute:
+```bash
+cd frontend
+bun run dev
+
+cd ../backend
+uv run fastapi dev app/main.py
+```
+2. Open `http://localhost:3000` in your browser.
+
 ### Development setup
 Install the [mypy plugin](https://plugins.jetbrains.com/plugin/25888-mypy/versions/stable) 
 for PyCharm to have static typing when working with the backend.
