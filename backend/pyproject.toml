@@ -7,4 +7,5 @@ dependencies = [
     "fastapi>=0.123.9",
     "fastapi-cloud-cli>=0.6.0",
     "mypy==1.19.0",
+    "roslibpy>=2.0.0",
 ]

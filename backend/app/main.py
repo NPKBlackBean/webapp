@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from utils import get_ip_address
+from services import get_sensor_readings()
 
 app = FastAPI()
 
@@ -28,6 +29,38 @@ async def backend_ip() -> dict[str, str]:
     backend_ip_address = get_ip_address()
     return {"ip_address": backend_ip_address}
 
-@app.get("/begin_reading")
-async def begin_reading() -> dict[str, str]:
-    return {"message": "This endpoint should return sensor data for all pots"}
+@app.get("/sensor_readings")
+async def sensor_readings() -> dict[str, dict]:
+    # {
+    #     "controls": {
+    #         0: {
+    #             "pH": 7,
+    #             "temp": 20,
+    #             "humidity": 80,
+    #             "N": 10,
+    #             "P": 7,
+    #             "K": 6,
+    #         }
+    #     },
+    #     "treatments": {
+    #         0: {
+    #             "pH": 7,
+    #             "temp": 20,
+    #             "humidity": 80,
+    #             "N": 10,
+    #             "P": 7,
+    #             "K": 6,
+    #         },
+    #         1: {
+    #             "pH": 7,
+    #             "temp": 20,
+    #             "humidity": 80,
+    #             "N": 10,
+    #             "P": 7,
+    #             "K": 6,
+    #         }
+    #     }
+    # }
+
+    received_sensor_readings = get_sensor_readings()
+    return received_sensor_readings
