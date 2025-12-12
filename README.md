@@ -18,7 +18,6 @@ We use [uv](https://github.com/astral-sh/uv) for package management in Python. I
 command when installing packages:
 ```bash
 # example
-uv pip install mypy
 uv add mypy
 ```
 
