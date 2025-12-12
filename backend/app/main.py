@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from utils import get_ip_address
-from services import get_sensor_readings()
+from services import get_sensor_readings
 
 app = FastAPI()
 
