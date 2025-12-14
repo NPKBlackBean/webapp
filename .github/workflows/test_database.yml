@@ -25,7 +25,18 @@ jobs:
        - name: Start TimescaleDB with Docker Compose
          working-directory: database/docker
          run: docker compose up -d
-          
+
+       - name: Wait for TimescaleDB to be ready
+         run: |
+           for i in $(seq 1 20); do
+             if docker exec timescaledb pg_isready -U admin; then
+               echo "Database is ready"
+               exit 0
+             fi
+             sleep 5
+             echo "Waiting for the database..."
+           done
+       
        - name: Verify TimescaleDB extension
          run: docker exec timescaledb psql -U admin -d metrics -c "\dx" | grep timescaledb
     
