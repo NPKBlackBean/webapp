@@ -14,4 +14,4 @@ backend/.uv/
 
 .idea/
 
-.env
+database/.env
