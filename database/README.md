@@ -26,11 +26,12 @@ Production runs might be managed with Timescale Cloud.
 Configuration is done via environment variables.
 
 Required variables:
+- POSTGRES_PORT
 - POSTGRES_DB
 - POSTGRES_USER
 - POSTGRES_PASSWORD
 
-These are defined in `.env` (not committed).
+These are defined in `.env` in database/docker directory (not committed).
 
 
 ## Getting started
