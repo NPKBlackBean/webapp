@@ -77,7 +77,7 @@ If there is indeed a row mentioning TimescaleDB, then we are all set!
 - backup strategy/scripts
     docker exec timescaledb pg_dump -U tsuser metrics > backup.sql
     restoring: psql -h localhost -U tsuser metrics < backup.sql
-
+*/
 ```
 
 To stop the container use:
@@ -107,6 +107,19 @@ psql -h localhost -U admin -d metrics
 
 # Exit the psql:
 quit
+```
+
+## Executing commands in the compose
+Use docker exec
+```bash
+# Example
+docker exec -it timescaledb psql -U admin -d metrics
+```
+
+Then you can execute SQL statements, like
+```sql
+\dt -- See list of tables
+\q -- Quit
 ```
 
 ## TimescaleDB Conventions

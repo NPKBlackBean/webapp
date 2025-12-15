@@ -6,7 +6,7 @@ cd frontend
 bun run dev
 
 cd ../backend
-uv run fastapi dev app/main.py
+uv run fastapi dev app/main.py # or just fastapi dev app/main.py
 ```
 Add .env file to database/docker and set up environmental variables required by the PostgreSQL database container (see: database/README.md)
 ```bash
