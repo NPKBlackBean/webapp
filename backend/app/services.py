@@ -39,6 +39,8 @@ def get_sensor_readings():
 
     client.terminate()
 
+    #TODO: remove after integration with ROS backend
+    # with respect to SensorReading dataclass
     print(readings)
     print(type(readings))
     # {'EC': '544', 'pH': '527', 'N': '524', 'P': '534', 'K': '515'}

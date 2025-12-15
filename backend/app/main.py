@@ -33,6 +33,9 @@ async def backend_ip() -> dict[str, str]:
 
 @app.get("/sensor_readings")
 async def sensor_readings() -> dict[str, str]:
+    # TODO:
+    # Replace this placeholder (which is to create a mental image of what we want)
+    # with objects created from data received from sensor.
     # {
     #     "controls": {
     #         0: {
