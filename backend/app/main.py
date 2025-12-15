@@ -1,10 +1,12 @@
-from fastapi import FastAPI
+import fastapi
 from fastapi.middleware.cors import CORSMiddleware
+import logging
 
 from utils import get_ip_address
 from services import get_sensor_readings
 
-app = FastAPI()
+app = fastapi.FastAPI()
+logger = logging.getLogger(__name__)
 
 origins = [
     "http://localhost:3000",
@@ -30,7 +32,7 @@ async def backend_ip() -> dict[str, str]:
     return {"ip_address": backend_ip_address}
 
 @app.get("/sensor_readings")
-async def sensor_readings() -> dict[str, dict]:
+async def sensor_readings() -> dict[str, str]:
     # {
     #     "controls": {
     #         0: {

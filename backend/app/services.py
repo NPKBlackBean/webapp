@@ -1,20 +1,18 @@
-import roslibpy
+import roslibpy  # type: ignore[import-untyped]
+from roslibpy import ServiceResponse
+import logging
+
+logger = logging.getLogger(__name__)
 
 client = roslibpy.Ros(host='localhost', port=9090)
 
-# plantroid repo
-# class SensorReader(Node):
-#     def __init__(self, node_name):
-#         super().__init__(node_name)
-#         self.cli = self.create_client(Sensors, 'sensors_server')
-#         while not self.cli.wait_for_service(timeout_sec=5.0):
-#             self.get_logger().info('Sensor service not available, waiting again...')
-#         self.req = Sensors.Request()
-#         self.future = None
-#
-#     def send_request(self, num):
-#         self.req.sensor_number = num
-#         self.future = self.cli.call_async(self.req)
+REQ_SENSOR_NUMBER_TO_NAME = {
+    6: "EC",
+    7: "pH",
+    8: "N",
+    9: "P",
+    10: "K",
+}
 
 def get_sensor_readings():
     """
@@ -24,13 +22,26 @@ def get_sensor_readings():
     """
 
     client.run()
-    service = roslibpy.Service(client, 'sensors_server', 'rooted_msgs/srv/Sensors')
+    service = roslibpy.Service(client, 'sensors_server', 'external/Sensors')
 
-    # TODO: send request with sensor ID, like in Plantroid repo
     request = roslibpy.ServiceRequest()
 
-    print('Calling service...')
-    result = service.call(request)
-    print('Service response: {}'.format(result['loggers']))
+    readings: dict[str, str] = {}
+    for sensor_number, reading_name in REQ_SENSOR_NUMBER_TO_NAME.items():
+        logging.info(f"Calling sensor {sensor_number} for {reading_name}")
+
+        request.sensor_number = sensor_number
+        result = ServiceResponse(service.call(request))
+
+        readings[reading_name] = result["sensor_reading"]
+
+        logging.info(f"Reading is {result['sensor_reading']}")
 
     client.terminate()
+
+    print(readings)
+    print(type(readings))
+    # {'EC': '544', 'pH': '527', 'N': '524', 'P': '534', 'K': '515'}
+    # <class 'dict'>
+
+    return readings
