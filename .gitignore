@@ -13,3 +13,4 @@ backend/.uv/
 **/__pycache__/
 
 .idea/
+submodules/
