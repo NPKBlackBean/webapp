@@ -8,7 +8,7 @@ bun run dev
 cd ../backend
 uv run fastapi dev app/main.py
 
-cd ../database/docker -- for further instructions on working with db set up go to database/README.md
+cd ../database/docker # for further instructions on working with db set up go to database/README.md
 sudo docker compose up -d
 ```
 2. Open `http://localhost:3000` in your browser.
