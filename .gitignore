@@ -13,3 +13,5 @@ backend/.uv/
 **/__pycache__/
 
 .idea/
+
+database/.env
