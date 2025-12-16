@@ -1,0 +1,6 @@
+[submodule "devel"]
+	path = submodules/devel
+	url = git@github.com:NPKBlackBean/devel.git
+[submodule "Rosbridge-Mock-Sensor"]
+	path = submodules/Rosbridge-Mock-Sensor
+	url = git@github.com:NPKBlackBean/Rosbridge-Mock-Sensor.git
