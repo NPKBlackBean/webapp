@@ -23,4 +23,4 @@ jobs:
           uv sync --directory ./backend
 
       - name: Run tests
-        run: pytest
+        run: uv run pytest
