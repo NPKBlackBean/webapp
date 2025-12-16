@@ -6,7 +6,12 @@ cd frontend
 bun run dev
 
 cd ../backend
-uv run fastapi dev app/main.py
+uv run fastapi dev app/main.py # or just fastapi dev app/main.py
+```
+Add .env file to database/docker and set up environmental variables required by the PostgreSQL database container (see: database/README.md)
+```bash
+cd ../database/docker # for further instructions on working with db set up go to database/README.md
+sudo docker compose up -d
 ```
 2. Open `http://localhost:3000` in your browser.
 

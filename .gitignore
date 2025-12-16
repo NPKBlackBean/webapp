@@ -14,3 +14,5 @@ backend/.uv/
 
 .idea/
 submodules/
+
+database/.env
