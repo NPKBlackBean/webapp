@@ -24,3 +24,51 @@ jobs:
 
       - name: Run tests
         run: uv run --directory ./backend pytest
+
+      - name: Validate docker-compose configuration
+        run: |
+          cd database/docker
+          docker compose config > /dev/null
+        env:
+          POSTGRES_DB: metrics_db
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: testpass123
+          POSTGRES_PORT: 5432
+          GRAFANA_USER: admin
+          GRAFANA_PASSWORD: testpass123
+          GRAFANA_PORT: 3000
+
+      - name: Start services
+        run: |
+          cd database/docker
+          docker compose up -d
+        env:
+          POSTGRES_DB: metrics_db
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: testpass123
+          POSTGRES_PORT: 5432
+          GRAFANA_USER: admin
+          GRAFANA_PASSWORD: testpass123
+          GRAFANA_PORT: 3000
+
+      - name: Wait for services to be ready
+        run: |
+          sleep 10
+          cd database/docker
+          docker compose logs
+
+      - name: Verify TimescaleDB connection
+        run: |
+          cd database/docker
+          docker compose exec -T timescaledb psql -U admin -d metrics_db -c "SELECT * FROM pg_extension WHERE extname='timescaledb';" || exit 1
+
+      - name: Verify Grafana is running
+        run: |
+          cd database/docker
+          curl -s http://localhost:3000/api/health || exit 1
+
+      - name: Stop services
+        run: |
+          cd database/docker
+          docker compose down
+
