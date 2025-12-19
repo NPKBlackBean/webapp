@@ -2,6 +2,8 @@ import roslibpy  # type: ignore[import-untyped]
 from roslibpy import ServiceResponse
 import logging
 
+from domain import SensorReading
+
 logger = logging.getLogger(__name__)
 
 client = roslibpy.Ros(host='localhost', port=9090)
@@ -14,10 +16,10 @@ REQ_SENSOR_NUMBER_TO_NAME = {
     10: "K",
 }
 
-def get_sensor_readings():
+def get_sensor_reading() -> SensorReading:
     """
-    Talk ROSBridge with the ROS sensor server to get soil sensor readings.
-    :return: a dict of SensorReadings with "control", "treatment" keys.
+    Talk ROSBridge with the ROS sensor server to get current soil sensor reading.
+    :return: a SensorReading containing all the data.
     :raise: TimeoutError when no readings are received from the server in >30 seconds.
     """
 
@@ -26,24 +28,28 @@ def get_sensor_readings():
 
     request = roslibpy.ServiceRequest()
 
-    readings: dict[str, str] = {}
+    readings: dict[str, float] = {}
     for sensor_number, reading_name in REQ_SENSOR_NUMBER_TO_NAME.items():
         logging.info(f"Calling sensor {sensor_number} for {reading_name}")
 
         request.sensor_number = sensor_number
         result = ServiceResponse(service.call(request))
 
-        readings[reading_name] = result["sensor_reading"]
+        readings[reading_name] = float(result["sensor_reading"])
 
         logging.info(f"Reading is {result['sensor_reading']}")
 
     client.terminate()
 
-    #TODO: remove after integration with ROS backend
-    # with respect to SensorReading dataclass
-    print(readings)
-    print(type(readings))
+    # print(readings)
+    # print(type(readings))
     # {'EC': '544', 'pH': '527', 'N': '524', 'P': '534', 'K': '515'}
     # <class 'dict'>
 
-    return readings
+    return SensorReading(
+        readings["EC"],
+        readings["pH"],
+        readings["N"],
+        readings["P"],
+        readings["K"],
+    )
