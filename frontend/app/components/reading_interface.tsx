@@ -5,50 +5,59 @@ import ReadingTimer from './reading_timer';
 // MTP<N> -> move to pot N, LSB -> let sensor be
 // MTP1, LSB, MTP2, LSB, MTP3, LSB
 const TOTAL_STAGES = 6;
+const STAGE_DURATION = 30; // seconds per stage
 
 export default function ReadingInterface() {
   const [running, setRunning] = useState(false);
   const [stageIndex, setStageIndex] = useState(0);
-  const [seconds, setSeconds] = useState(60);
+  const [seconds, setSeconds] = useState(STAGE_DURATION);
   const [completed, setCompleted] = useState(false);
   const [accepted, setAccepted] = useState(false);
 
+  // Using a timeout-driven effect to decrement the seconds counter and
+  // to advance the stage exactly once when the timer reaches zero.
   useEffect(() => {
     if (!running) return undefined;
-    const id = setInterval(() => {
-      setSeconds(prev => {
-        if (prev > 1) return prev - 1;
-        // time expired for current stage
-        setStageIndex(si => {
-          if (si < TOTAL_STAGES - 1) {
-            return si + 1;
-          } else {
-            // finished all stages
-            setRunning(false);
-            setCompleted(true);
-            return si;
-          }
-        });
-        return 60;
-      });
-    }, 1000);
-    return () => clearInterval(id);
-  }, [running]);
+
+    // If we still have time left in the current stage, schedule a decrement
+    if (seconds > 0) {
+      const t = setTimeout(() => setSeconds(s => s - 1), 1000);
+      return () => clearTimeout(t);
+    }
+
+    // seconds === 0 -> advance stage exactly once
+    setStageIndex(si => {
+      if (si < TOTAL_STAGES - 1) {
+        // move to next stage and reset timer
+        setSeconds(STAGE_DURATION);
+        return si + 1;
+      }
+
+      // finished all stages
+      setRunning(false);
+      setCompleted(true);
+      // keep seconds at 0 so UI can show completion if needed
+      return si;
+    });
+
+    // no cleanup necessary here because advancing stage resets seconds or stops running
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running, seconds]);
 
   function startReading() {
     setAccepted(false);
     setCompleted(false);
     setStageIndex(0);
-    setSeconds(60);
+    setSeconds(STAGE_DURATION);
     setRunning(true);
   }
 
-  function restartReading() {
+  function abortReading() {
     setRunning(false);
     setAccepted(false);
     setCompleted(false);
     setStageIndex(0);
-    setSeconds(60);
+    setSeconds(STAGE_DURATION);
   }
 
   function acceptReading() {
@@ -62,9 +71,9 @@ export default function ReadingInterface() {
     if (stageIndex % 2 === 0) {
       // even indices are MTP stages: 0 -> pot1, 2 -> pot2, 4 -> pot3
       const pot = Math.floor(stageIndex / 2) + 1;
-      return `Move the sensor to pot ${pot}`;
+      return `Move the sensor to Pot ${pot}`;
     } else {
-      return 'Reading in progress, do not move the sensor';
+      return 'Reading in progress, do not move the sensor!';
     }
   })();
 
@@ -77,7 +86,7 @@ export default function ReadingInterface() {
             This will be repeated for pots 2 and 3. After that you either accept or reject.
         </Typography>
         <Button variant="contained" onClick={startReading} disabled={running}>Start Reading</Button>
-        <Button variant="contained" onClick={restartReading}>Restart Reading</Button>
+        <Button variant="contained" color="error" onClick={abortReading}>Abort Reading</Button>
 
         {completed && !accepted && (
           <Button variant="contained" color="success" onClick={acceptReading} style={{ marginTop: 8 }}>

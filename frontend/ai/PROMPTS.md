@@ -56,7 +56,7 @@ Purpose:
 Orient myself as to how to implement JS/TS functionality I have
 never implemented before
 
-Prompt (preceded by context of prompt #1): 
+Prompt #2 (preceded by context of prompt #1): 
 Propose to me how the following functionality could be implemented in the codebase:
 1. When the user clicks "Start Reading", the reading timer switches to "move to pot" mode. The "move to pot"
 mode (hereinafter referred to as MTP) lasts 60 seconds and has what is currently the hardcoded "Wait" text display 
@@ -69,3 +69,10 @@ After this first MTP and LSB stage, the sensor goes into MTP for pot 2, then LSB
 After this, the user can either press "Restart Reading" within reading_interface.tsx or "Accept Reading" 
 in reading_interface. Accept Reading appears after these stages are done, and disappears upon acceptance or 
 after the user presses Restart Reading. It only appears after a MTP-LSB-MTP-LSB-MTP-LSB cycle is completed.
+
+
+Prompt #3:
+There is a flaw in the current implementation of the stages of reading from the sensor. It should proceed as follows:
+<Prompt #2 contents>
+It currently works such that it does not leave the sensor for 60 seconds, but instead instantly switches to 
+commanding the user to move the sensor to the next pot.
