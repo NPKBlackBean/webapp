@@ -102,7 +102,7 @@ export default function ReadingInterface() {
       <Card style={{ height: '350px', width: '200px', padding: '10px', display: 'flex', flexDirection: 'column' }}>
         <Typography variant="body2">Reading Details</Typography>
         <Divider style={{ margin: '10px 0' }} />
-        <Box style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
           <Chip label={<><b>EC:</b> 0.0</>} />
           <Chip label={<><b>pH:</b> 0.0</>} />
           <Chip label={<><b>Nitrogen:</b> 0.0</>} />
