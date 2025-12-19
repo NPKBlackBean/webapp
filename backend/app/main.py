@@ -35,5 +35,5 @@ async def backend_ip() -> dict[str, str]:
 
 @app.get("/sensor_reading")
 async def sensor_reading() -> dict[str, str]:
-    sensor_reading: SensorReading = get_sensor_reading()
-    return asdict(sensor_reading)
+    _sensor_reading: SensorReading = get_sensor_reading()
+    return asdict(_sensor_reading)
