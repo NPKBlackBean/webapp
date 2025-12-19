@@ -50,3 +50,22 @@ be regular text informing of the time left until the end of the current stage: t
 The logic for these instructions will be implemented in TypeScript, and the implementation of that logic being left to
 my team. The "clock section" shall contain a static image of a clock, aligned with the color and styling of the rest
 of the webpage. This clock should be taken from Lucide React.
+
+
+Purpose: 
+Orient myself as to how to implement JS/TS functionality I have
+never implemented before
+
+Prompt (preceded by context of prompt #1): 
+Propose to me how the following functionality could be implemented in the codebase:
+1. When the user clicks "Start Reading", the reading timer switches to "move to pot" mode. The "move to pot"
+mode (hereinafter referred to as MTP) lasts 60 seconds and has what is currently the hardcoded "Wait" text display 
+as "Move the sensor to pot 1".
+2. After the 60 seconds elapses, the reading timer switches to "let sensor be" (LSB) mode. It displays 
+"Reading in progress, do not move the sensor" for 60 seconds.
+
+After this first MTP and LSB stage, the sensor goes into MTP for pot 2, then LSB, then MTP for sensor 3.
+
+After this, the user can either press "Restart Reading" within reading_interface.tsx or "Accept Reading" 
+in reading_interface. Accept Reading appears after these stages are done, and disappears upon acceptance or 
+after the user presses Restart Reading. It only appears after a MTP-LSB-MTP-LSB-MTP-LSB cycle is completed.
