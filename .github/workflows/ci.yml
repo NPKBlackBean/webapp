@@ -36,7 +36,7 @@ jobs:
           POSTGRES_PORT: 5432
           GRAFANA_USER: admin
           GRAFANA_PASSWORD: testpass123
-          GRAFANA_PORT: 3000
+          GRAFANA_PORT: 3001
 
       - name: Start services
         run: |
@@ -49,7 +49,7 @@ jobs:
           POSTGRES_PORT: 5432
           GRAFANA_USER: admin
           GRAFANA_PASSWORD: testpass123
-          GRAFANA_PORT: 3000
+          GRAFANA_PORT: 3001
 
       - name: Wait for services to be ready
         run: |
@@ -65,7 +65,9 @@ jobs:
       - name: Verify Grafana is running
         run: |
           cd database/docker
-          curl -s http://localhost:3000/api/health || exit 1
+          curl -s http://localhost:${GRAFANA_PORT}/api/health || exit 1
+        env:
+          GRAFANA_PORT: 3001
 
       - name: Stop services
         run: |

@@ -13,7 +13,7 @@ Add .env file to database/docker and set up environmental variables required by 
 cd ../database/docker # for further instructions on working with db set up go to database/README.md
 sudo docker compose up -d
 ```
-2. Open the app at `http://localhost:5173` (frontend dev server) and Grafana at `http://localhost:3000` (login with GRAFANA_USER/GRAFANA_PASSWORD from .env).
+2. Open the app at `http://localhost:3000` (frontend dev server) and Grafana at `http://localhost:3001` (login with GRAFANA_USER/GRAFANA_PASSWORD from .env).
 
 ### Development setup
 Install the [mypy plugin](https://plugins.jetbrains.com/plugin/25888-mypy/versions/stable) 

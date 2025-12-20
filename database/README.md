@@ -76,7 +76,7 @@ Should print something that looks like:
 If there is indeed a row mentioning TimescaleDB, then we are all set!
 
 ### Access Grafana Dashboards
-Open `http://localhost:3000` in your browser, login info being what you put in the `.env` file:
+Open `http://localhost:3001` in your browser, login info being what you put in the `.env` file:
 
 | Field      | Value               |
 |------------|---------------------|
