@@ -1,5 +1,7 @@
 services:
   timescaledb:
+    networks:
+      - shared-stack-net
     image: timescale/timescaledb:latest-pg16
     container_name: timescaledb
     ports:
@@ -13,5 +15,28 @@ services:
       - ../init:/docker-entrypoint-initdb.d
     restart: unless-stopped
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    networks:
+      - shared-stack-net
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - timescaledb
+    restart: unless-stopped
+
 volumes:
   timescale_data:
+  grafana_data:
+
+networks:
+  shared-stack-net:
+    driver: bridge

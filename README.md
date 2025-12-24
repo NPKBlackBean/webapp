@@ -8,12 +8,12 @@ bun run dev
 cd ../backend
 uv run fastapi dev app/main.py # or just fastapi dev app/main.py
 ```
-Add .env file to database/docker and set up environmental variables required by the PostgreSQL database container (see: database/README.md)
+Add .env file to database/docker and set up environmental variables required by the PostgreSQL database and Grafana containers (see: database/README.md)
 ```bash
 cd ../database/docker # for further instructions on working with db set up go to database/README.md
 sudo docker compose up -d
 ```
-2. Open `http://localhost:3000` in your browser.
+2. Open the app at `http://localhost:3000` (frontend dev server) and Grafana at `http://localhost:3001` (login with GRAFANA_USER/GRAFANA_PASSWORD from .env).
 
 ### Development setup
 Install the [mypy plugin](https://plugins.jetbrains.com/plugin/25888-mypy/versions/stable) 

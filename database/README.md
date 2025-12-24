@@ -17,9 +17,10 @@ Production runs might be managed with Timescale Cloud.
 ## Architecture
 
 - TimescaleDB runs as a Docker container
-- Data is persisted in a Docker volume (`timescale_data`)
-- Initialization scripts run once on first startup (TODO)
-- Application services connect via port 5432
+- Grafana runs as a Docker container with provisioned dashboards
+- Data is persisted in Docker volumes (`timescale_data`, `grafana_data`)
+- Initialization scripts run once on first startup from `init/sensor_data.sql`
+- Application services connect via port 5432 (PostgreSQL) and 3000 (Grafana)
 
 ## Configuration
 
@@ -30,6 +31,9 @@ Required variables:
 - POSTGRES_DB
 - POSTGRES_USER
 - POSTGRES_PASSWORD
+- GRAFANA_USER
+- GRAFANA_PASSWORD
+- GRAFANA_PORT
 
 These are defined in `.env` in database/docker directory (not committed).
 
@@ -71,12 +75,24 @@ Should print something that looks like:
 
 If there is indeed a row mentioning TimescaleDB, then we are all set!
 
+### Access Grafana Dashboards
+Open `http://localhost:3001` in your browser, login info being what you put in the `.env` file:
+
+| Field      | Value               |
+|------------|---------------------|
+| **login**  | `${GRAFANA_USER}`   |
+| **password** | `${GRAFANA_PASSWORD}` |
+
+Available dashboards:
+- **All - Soil Sensor Data**: Main dashboard showing all plants with stat panels, timeseries charts (EC, pH, N, P, K), and Recent Alerts table. Color-coded thresholds (red/orange/yellow/green).
+- **Plant Comparison - Soil Sensor Data**: Cross-plant analytics with side-by-side values, deviation-from-target, health ranking, multi-plant comparison charts (plant_01: purple, plant_02: blue, plant_03: pink), and Recent Alerts.
+- **plant_01 / plant_02 / plant_03**: Individual plant dashboards with same layout as main dashboard, filtered per plant.
+
 ```java
 /* TODO: 
-- create a set up script to run on first boot from docker-compose.yml to have the tables set there; when we agree on the database architecture
 - backup strategy/scripts
-    docker exec timescaledb pg_dump -U tsuser metrics > backup.sql
-    restoring: psql -h localhost -U tsuser metrics < backup.sql
+    docker exec timescaledb pg_dump -U admin metrics_db > backup.sql
+    restoring: psql -h localhost -U admin metrics_db < backup.sql
 */
 ```
 
@@ -93,17 +109,20 @@ docker compose down -v
 
 ## Common Commands
 ```bash
-# Start database:
+# Start database and Grafana:
 sudo docker compose up -d
 
-# Stop database:
+# Stop database and Grafana:
 sudo docker compose stop
+
+# Restart Grafana (to reload dashboards):
+sudo docker compose restart grafana
 
 # View logs:
 sudo docker compose logs -f
 
 # Connect via psql:
-psql -h localhost -U admin -d metrics
+psql -h localhost -U admin -d metrics_db
 
 # Exit the psql:
 quit
