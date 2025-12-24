@@ -1,0 +1,526 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {"type": "grafana", "uid": "-- Grafana --"},
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "custom": {
+            "align": "center",
+            "cellOptions": {"type": "auto"},
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        },
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "plant_id"}, "properties": [{"id": "custom.width", "value": 100}]},
+          {"matcher": {"id": "byName", "options": "EC"}, "properties": [{"id": "custom.cellOptions", "value": {"type": "color-background"}}, {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 400}, {"color": "yellow", "value": 600}, {"color": "green", "value": 800}]}}]},
+          {"matcher": {"id": "byName", "options": "pH"}, "properties": [{"id": "custom.cellOptions", "value": {"type": "color-background"}}, {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 5.5}, {"color": "green", "value": 6.5}, {"color": "yellow", "value": 7.5}, {"color": "red", "value": 8.5}]}}]},
+          {"matcher": {"id": "byName", "options": "N"}, "properties": [{"id": "custom.cellOptions", "value": {"type": "color-background"}}, {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 10}, {"color": "yellow", "value": 20}, {"color": "green", "value": 30}]}}]},
+          {"matcher": {"id": "byName", "options": "P"}, "properties": [{"id": "custom.cellOptions", "value": {"type": "color-background"}}, {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 5}, {"color": "yellow", "value": 10}, {"color": "green", "value": 15}]}}]},
+          {"matcher": {"id": "byName", "options": "K"}, "properties": [{"id": "custom.cellOptions", "value": {"type": "color-background"}}, {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 10}, {"color": "yellow", "value": 20}, {"color": "green", "value": 30}]}}]}
+        ]
+      },
+      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 0},
+      "id": 1,
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {"show": false}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (SELECT plant_id, MAX(time) as max_time FROM sensor_data GROUP BY plant_id) SELECT s.plant_id, ROUND(s.ec::numeric, 2) as \"EC\", ROUND(s.ph::numeric, 2) as \"pH\", ROUND(s.nitrogen::numeric, 2) as \"N\", ROUND(s.phosphorus::numeric, 2) as \"P\", ROUND(s.potassium::numeric, 2) as \"K\" FROM sensor_data s JOIN latest l ON s.plant_id = l.plant_id AND s.time = l.max_time ORDER BY s.plant_id",
+          "refId": "A"
+        }
+      ],
+      "title": "Side-by-Side: Current Values",
+      "type": "table"
+    },
+    {
+      "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "custom": {
+            "align": "center",
+            "cellOptions": {"type": "auto"},
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "short"
+        },
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "plant_id"}, "properties": [{"id": "custom.width", "value": 100}]},
+          {"matcher": {"id": "byRegexp", "options": "/Δ.*/"}, "properties": [{"id": "custom.cellOptions", "value": {"type": "color-text"}}, {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "yellow", "value": -50}, {"color": "green", "value": -20}, {"color": "yellow", "value": 20}, {"color": "red", "value": 50}]}}]}
+        ]
+      },
+      "gridPos": {"h": 6, "w": 18, "x": 0, "y": 6},
+      "id": 2,
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {"show": false}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (SELECT plant_id, MAX(time) as max_time FROM sensor_data GROUP BY plant_id), targets AS (SELECT 700 as ec_target, 6.8 as ph_target, 25 as n_target, 10 as p_target, 25 as k_target) SELECT s.plant_id, ROUND(((s.ec - t.ec_target) / t.ec_target * 100)::numeric, 1) as \"Δ EC %\", ROUND(((s.ph - t.ph_target) / t.ph_target * 100)::numeric, 1) as \"Δ pH %\", ROUND(((s.nitrogen - t.n_target) / t.n_target * 100)::numeric, 1) as \"Δ N %\", ROUND(((s.phosphorus - t.p_target) / t.p_target * 100)::numeric, 1) as \"Δ P %\", ROUND(((s.potassium - t.k_target) / t.k_target * 100)::numeric, 1) as \"Δ K %\" FROM sensor_data s JOIN latest l ON s.plant_id = l.plant_id AND s.time = l.max_time CROSS JOIN targets t ORDER BY s.plant_id",
+          "refId": "A"
+        }
+      ],
+      "title": "Deviation from Target (EC:700, pH:6.8, N:25, P:10, K:25)",
+      "type": "table"
+    },
+    {
+      "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "custom": {
+            "align": "center",
+            "cellOptions": {"type": "auto"},
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]},
+          "unit": "short"
+        },
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "plant_id"}, "properties": [{"id": "custom.width", "value": 100}]},
+          {"matcher": {"id": "byName", "options": "Health Score"}, "properties": [{"id": "custom.cellOptions", "value": {"type": "color-background"}}, {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "orange", "value": 40}, {"color": "yellow", "value": 60}, {"color": "green", "value": 80}]}}, {"id": "custom.width", "value": 120}]},
+          {"matcher": {"id": "byName", "options": "Rank"}, "properties": [{"id": "custom.width", "value": 60}]}
+        ]
+      },
+      "gridPos": {"h": 6, "w": 6, "x": 24, "y": 6},
+      "id": 3,
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {"show": false}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH latest AS (SELECT plant_id, MAX(time) as max_time FROM sensor_data GROUP BY plant_id), scores AS (SELECT s.plant_id, CASE WHEN s.ec >= 800 THEN 100 WHEN s.ec >= 600 THEN 75 WHEN s.ec >= 400 THEN 50 ELSE 25 END + CASE WHEN s.ph >= 6.5 AND s.ph <= 7.5 THEN 100 WHEN s.ph >= 5.5 AND s.ph <= 8.5 THEN 50 ELSE 25 END + CASE WHEN s.nitrogen >= 30 THEN 100 WHEN s.nitrogen >= 20 THEN 75 WHEN s.nitrogen >= 10 THEN 50 ELSE 25 END + CASE WHEN s.phosphorus >= 15 THEN 100 WHEN s.phosphorus >= 10 THEN 75 WHEN s.phosphorus >= 5 THEN 50 ELSE 25 END + CASE WHEN s.potassium >= 30 THEN 100 WHEN s.potassium >= 20 THEN 75 WHEN s.potassium >= 10 THEN 50 ELSE 25 END as total_score FROM sensor_data s JOIN latest l ON s.plant_id = l.plant_id AND s.time = l.max_time) SELECT plant_id, ROUND((total_score / 5.0)::numeric, 0) as \"Health Score\", RANK() OVER (ORDER BY total_score DESC) as \"Rank\" FROM scores ORDER BY total_score DESC",
+          "refId": "A"
+        }
+      ],
+      "title": "Plant Ranking by Health",
+      "type": "table"
+    },
+    {
+      "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "EC (µS/cm)",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {"type": "linear"},
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {"group": "A", "mode": "none"},
+            "thresholdsStyle": {"mode": "off"}
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        },
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+        ]
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "id": 4,
+      "options": {
+        "legend": {"calcs": ["mean", "last"], "displayMode": "table", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "none"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, ec as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "A"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, ec as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "B"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, ec as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "C"
+        }
+      ],
+      "title": "EC Comparison",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "pH",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {"type": "linear"},
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {"group": "A", "mode": "none"},
+            "thresholdsStyle": {"mode": "off"}
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        },
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+        ]
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "id": 5,
+      "options": {
+        "legend": {"calcs": ["mean", "last"], "displayMode": "table", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "none"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, ph as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "A"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, ph as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "B"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, ph as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "C"
+        }
+      ],
+      "title": "pH Comparison",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Nitrogen (ppm)",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {"type": "linear"},
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {"group": "A", "mode": "none"},
+            "thresholdsStyle": {"mode": "off"}
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        },
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+        ]
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 20},
+      "id": 6,
+      "options": {
+        "legend": {"calcs": ["mean", "last"], "displayMode": "table", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "none"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, nitrogen as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "A"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, nitrogen as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "B"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, nitrogen as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "C"
+        }
+      ],
+      "title": "Nitrogen Comparison",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Phosphorus (ppm)",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {"type": "linear"},
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {"group": "A", "mode": "none"},
+            "thresholdsStyle": {"mode": "off"}
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        },
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+        ]
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 20},
+      "id": 7,
+      "options": {
+        "legend": {"calcs": ["mean", "last"], "displayMode": "table", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "none"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, phosphorus as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "A"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, phosphorus as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "B"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, phosphorus as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "C"
+        }
+      ],
+      "title": "Phosphorus Comparison",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Potassium (ppm)",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {"legend": false, "tooltip": false, "viz": false},
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {"type": "linear"},
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {"group": "A", "mode": "none"},
+            "thresholdsStyle": {"mode": "off"}
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
+        },
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+        ]
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 20},
+      "id": 8,
+      "options": {
+        "legend": {"calcs": ["mean", "last"], "displayMode": "table", "placement": "bottom", "showLegend": true},
+        "tooltip": {"mode": "multi", "sort": "none"}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, potassium as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "A"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, potassium as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "B"
+        },
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time, potassium as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "refId": "C"
+        }
+      ],
+      "title": "Potassium Comparison",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "custom": {
+            "align": "auto",
+            "cellOptions": {"type": "auto"},
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {"mode": "absolute", "steps": [{"color": "gray", "value": null}]}
+        }
+      },
+      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 28},
+      "id": 9,
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {"show": false}
+      },
+      "targets": [
+        {
+          "datasource": {"type": "grafana-postgresql-datasource", "uid": "P40AE60E18F02DE32"},
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT time, plant_id, ec, ph, nitrogen, phosphorus, potassium, array_to_string(array_remove(array[ CASE WHEN ec < 400 THEN 'EC low' ELSE NULL END, CASE WHEN ph < 5.5 THEN 'pH low' WHEN ph > 8.5 THEN 'pH high' ELSE NULL END, CASE WHEN nitrogen < 10 THEN 'N low' WHEN nitrogen > 30 THEN 'N high' ELSE NULL END, CASE WHEN phosphorus < 5 THEN 'P low' WHEN phosphorus > 15 THEN 'P high' ELSE NULL END, CASE WHEN potassium < 10 THEN 'K low' WHEN potassium > 30 THEN 'K high' ELSE NULL END ], NULL), ', ') AS issues FROM sensor_data WHERE $__timeFilter(time) AND ( ec < 400 OR ph < 5.5 OR ph > 8.5 OR nitrogen < 10 OR nitrogen > 30 OR phosphorus < 5 OR phosphorus > 15 OR potassium < 10 OR potassium > 30 ) ORDER BY time DESC LIMIT 50",
+          "refId": "A"
+        }
+      ],
+      "title": "Recent Alerts",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 42,
+  "style": "dark",
+  "tags": ["soil", "sensors", "comparison"],
+  "templating": {"list": []},
+  "time": {"from": "now-6h", "to": "now"},
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Plant Comparison - Soil Sensor Data",
+  "uid": "plant-comparison",
+  "version": 5
+}
