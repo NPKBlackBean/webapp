@@ -1,7 +1,7 @@
 from dataclasses import dataclass
+from pydantic import BaseModel
 
-@dataclass
-class SensorReading:
+class SensorReading(BaseModel):
     """Class for storing sensor reading data."""
     EC: float
     pH: float

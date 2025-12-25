@@ -9,4 +9,7 @@ dependencies = [
     "mypy==1.19.0",
     "pytest>=9.0.2",
     "roslibpy>=2.0.0",
+    "psycopg2-binary>=2.9.11",
+    "types-psycopg2>=2.9.21.20251012",
+    "python-dotenv>=1.2.1",
 ]

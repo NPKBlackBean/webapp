@@ -3,7 +3,7 @@ import { Card, Button, Typography, Divider, Chip, Box } from '@mui/material';
 import ReadingTimer from './reading_timer';
 
 const TOTAL_STAGES = 6;
-const STAGE_DURATION = 30;
+const STAGE_DURATION = 10;
 
 interface SensorReading {
     EC: number;
@@ -15,6 +15,17 @@ interface SensorReading {
 
 async function fetchSensorReading(): Promise<SensorReading> {
     const response = await fetch("http://localhost:8000/sensor_reading");
+    return response.json();
+}
+
+async function putSensorReadings(readings: (SensorReading | null)[]): Promise<SensorReading> {
+    const response = await fetch("http://localhost:8000/accepted_readings", {
+        method: "POST",
+        body: JSON.stringify({ readings: readings }),
+        headers: {
+            "Content-Type": "application/json"
+        },
+    });
     return response.json();
 }
 
@@ -81,9 +92,10 @@ export default function ReadingInterface() {
         setSeconds(STAGE_DURATION);
     }
 
-    function acceptReading() {
+    function acceptReading(readings: (SensorReading | null)[]) {
         setAccepted(true);
         setCompleted(false);
+        putSensorReadings(readings).then((json) => console.log(json));
     }
 
     const actionText = (() => {
@@ -104,7 +116,7 @@ export default function ReadingInterface() {
                 <Button variant="contained" onClick={startReading} disabled={running}>Start Reading</Button>
                 <Button variant="contained" color="error" onClick={abortReading}>Abort Reading</Button>
                 {completed && !accepted && (
-                    <Button variant="contained" color="success" onClick={acceptReading} style={{ marginTop: 8 }}>
+                    <Button variant="contained" color="success" onClick={() => acceptReading(readings)} style={{ marginTop: 8 }}>
                         Accept Reading
                     </Button>
                 )}
