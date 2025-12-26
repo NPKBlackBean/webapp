@@ -3,7 +3,7 @@
 1. Execute:
 ```bash
 cd frontend
-bun run dev
+bun run dev --host 0.0.0.0
 
 cd ../backend
 uv run fastapi dev app/main.py # or just fastapi dev app/main.py
