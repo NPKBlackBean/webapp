@@ -1,0 +1,15 @@
+[Unit]
+Description=Daily TimescaleDB logical backup (pg_dump) for coolbeans
+After=network.target
+
+[Service]
+Type=oneshot
+User=coolbeans
+Group=coolbeans
+WorkingDirectory=/home/coolbeans/webapp/database/backup
+ExecStart=/home/coolbeans/webapp/database/backup/.venv/bin/python /home/coolbeans/webapp/database/backup/database_backup.py --backup
+# kills children if process is killed by systemd
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target
