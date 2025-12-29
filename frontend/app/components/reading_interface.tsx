@@ -2,6 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Card, Button, Typography, Divider, Chip, Box } from '@mui/material';
 import ReadingTimer from './reading_timer';
 
+const config = {
+    units: {
+        ec: import.meta.env.VITE_EC_UNIT,
+        temperature: import.meta.env.VITE_TEMPERATURE_UNIT,
+        humidity: import.meta.env.VITE_HUMIDITY_UNIT,
+        nitrogen: import.meta.env.VITE_NITROGEN_UNIT,
+        phosphorus: import.meta.env.VITE_PHOSPHORUS_UNIT,
+        potassium: import.meta.env.VITE_POTASSIUM_UNIT,
+    }
+}
+
 const TOTAL_STAGES = 6;
 const STAGE_DURATION = 10;
 
@@ -132,11 +143,11 @@ export default function ReadingInterface() {
                 <Typography variant="body2">Pot {potNumber}</Typography>
                 <Divider style={{ margin: '10px 0' }} />
                 <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
-                    <Chip label={<><b>EC:</b> {display.EC}</>} />
+                    <Chip label={<><b>EC:</b> {display.EC} {config.units.ec}</>} />
                     <Chip label={<><b>pH:</b> {display.pH}</>} />
-                    <Chip label={<><b>Nitrogen:</b> {display.N}</>} />
-                    <Chip label={<><b>Phosphorus:</b> {display.P}</>} />
-                    <Chip label={<><b>Potassium:</b> {display.K}</>} />
+                    <Chip label={<><b>Nitrogen:</b> {display.N} {config.units.nitrogen}</>} />
+                    <Chip label={<><b>Phosphorus:</b> {display.P} {config.units.phosphorus}</>} />
+                    <Chip label={<><b>Potassium:</b> {display.K} {config.units.potassium}</>} />
                 </Box>
             </Card>
         );
