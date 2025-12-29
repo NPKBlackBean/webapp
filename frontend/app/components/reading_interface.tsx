@@ -14,7 +14,7 @@ const config = {
 }
 
 const TOTAL_STAGES = 6;
-const STAGE_DURATION = 10;
+const STAGE_DURATION = 20;
 
 interface SensorReading {
     EC: number;
