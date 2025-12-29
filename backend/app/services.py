@@ -12,7 +12,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-ros_client = roslibpy.Ros(host='localhost', port=9090)
+ros_client = roslibpy.Ros(host='localhost', port=1153)
 db = PostgresDatabase()
 
 def get_sensor_reading() -> SensorReading:
@@ -26,13 +26,11 @@ def get_sensor_reading() -> SensorReading:
         ros_client.run()
     service = roslibpy.Service(ros_client, 'sensors_server', 'external/Sensors')
 
-    request = roslibpy.ServiceRequest()
-
     readings: dict[str, float] = {}
     for sensor_number, reading_name in REQ_SENSOR_NUMBER_TO_NAME.items():
         logger.info(f"Calling sensor {sensor_number} for {reading_name}")
 
-        request.sensor_number = sensor_number
+        request = roslibpy.ServiceRequest({"sensor_number": sensor_number})
         result = ServiceResponse(service.call(request))
 
         readings[reading_name] = float(result["sensor_reading"])
