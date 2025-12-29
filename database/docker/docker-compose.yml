@@ -1,7 +1,7 @@
 services:
   timescaledb:
     networks:
-      - shared-stack-net
+      - shared_stack_net
     image: timescale/timescaledb:latest-pg16
     container_name: timescaledb
     ports:
@@ -19,7 +19,7 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     networks:
-      - shared-stack-net
+      - shared_stack_net
     ports:
       - "${GRAFANA_PORT}:3000"
     environment:
@@ -38,5 +38,5 @@ volumes:
   grafana_data:
 
 networks:
-  shared-stack-net:
+  shared_stack_net:
     driver: bridge

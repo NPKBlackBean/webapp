@@ -1,16 +1,18 @@
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
+from dataclasses import asdict
 import logging
 
 from utils import get_ip_address
-from services import get_sensor_readings
+from services import get_sensor_reading, save_sensor_reading
+from domain import SensorReading
 
 app = fastapi.FastAPI()
 logger = logging.getLogger(__name__)
 
+# TODO: switch to allow_origin_regex
 origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "*"
 ]
 
 app.add_middleware(
@@ -31,41 +33,12 @@ async def backend_ip() -> dict[str, str]:
     backend_ip_address = get_ip_address()
     return {"ip_address": backend_ip_address}
 
-@app.get("/sensor_readings")
-async def sensor_readings() -> dict[str, str]:
-    # TODO:
-    # Replace this placeholder (which is to create a mental image of what we want)
-    # with objects created from data received from sensor.
-    # {
-    #     "controls": {
-    #         0: {
-    #             "pH": 7,
-    #             "temp": 20,
-    #             "humidity": 80,
-    #             "N": 10,
-    #             "P": 7,
-    #             "K": 6,
-    #         }
-    #     },
-    #     "treatments": {
-    #         0: {
-    #             "pH": 7,
-    #             "temp": 20,
-    #             "humidity": 80,
-    #             "N": 10,
-    #             "P": 7,
-    #             "K": 6,
-    #         },
-    #         1: {
-    #             "pH": 7,
-    #             "temp": 20,
-    #             "humidity": 80,
-    #             "N": 10,
-    #             "P": 7,
-    #             "K": 6,
-    #         }
-    #     }
-    # }
+@app.get("/sensor_reading")
+async def sensor_reading() -> dict[str, float]:
+    _sensor_reading: SensorReading = get_sensor_reading()
+    return _sensor_reading.model_dump()
 
-    received_sensor_readings = get_sensor_readings()
-    return received_sensor_readings
+@app.post("/accepted_readings")
+async def accepted_readings(readings: dict[str, list[SensorReading]]) -> None:
+    for i, reading in enumerate(readings["readings"]):
+        save_sensor_reading(plant_id=(i + 1), sensor_reading=reading)
