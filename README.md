@@ -1,10 +1,21 @@
 ## CoolBeans Web App
-### 29.12 Compose setup
+## Current
+### Compose setup
+Example .env port config:
 ```bash
-# ensure .env is placed in ./docker, look to docker-compose.yaml ${} interpolations for inspiration
+POSTGRES_PORT=1156
+GRAFANA_PORT=1155
+ROS2_PORT=1154
+FASTAPI_PORT=1153
+REACT_PORT=1152
+```
+Ensure .env is placed in ./docker, look to docker-compose.yaml ${} interpolations or database, grafana docs to figure
+out what is needed; alternatively, look to the CI pipeline .yaml.
+```bash
 docker compose up -d ./docker
 ```
 
+## Legacy
 ### Run the app
 1. Execute:
 ```bash

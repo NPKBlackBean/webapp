@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
 
   ros2:
-    build: ../submodules/devel/docker
+    build: ../submodules/devel
     container_name: ros2
     privileged: true
     networks:
@@ -46,8 +46,6 @@ services:
     restart: unless-stopped
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
-    volumes:
-      - ../submodules/devel:/root/project
 
   fastapi:
     build: ../backend
