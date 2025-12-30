@@ -12,7 +12,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-ros_client = roslibpy.Ros(host='localhost', port=1153)
+ros_client = roslibpy.Ros(host='ros2', port=9090)
 db = PostgresDatabase()
 
 def get_sensor_reading() -> SensorReading:
