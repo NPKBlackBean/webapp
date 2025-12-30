@@ -1,8 +1,9 @@
 ## CoolBeans Web App
 ## Current
 ### Compose setup
-Example .env port config:
+Example .env networking config:
 ```bash
+PGHOST=timescaledb
 POSTGRES_PORT=1156
 GRAFANA_PORT=1155
 ROS2_PORT=1154
@@ -14,6 +15,13 @@ out what is needed; alternatively, look to the CI pipeline .yaml.
 ```bash
 docker compose up -d ./docker
 ```
+
+#### Troubleshooting networking
+To understand why the frontend fetches from `http://fastapi:3000/backend_ip` or why the backend connects to 
+`host='ros2', port=9090`, or why in `.env` we have `PGHOST=timescaledb`, look to the 
+[Docker compose networking docs](https://docs.docker.com/compose/how-tos/networking/):
+"... Each container can now look up the service name web or db and get back the appropriate container's IP address. 
+For example, web's application code could connect to the URL postgres://db:5432 and start using the Postgres database.."
 
 ## Legacy
 ### Run the app
