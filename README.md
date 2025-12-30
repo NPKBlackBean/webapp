@@ -1,4 +1,10 @@
 ## CoolBeans Web App
+### 29.12 Compose setup
+```bash
+# ensure .env is placed in ./docker, look to docker-compose.yaml ${} interpolations for inspiration
+docker compose up -d ./docker
+```
+
 ### Run the app
 1. Execute:
 ```bash
