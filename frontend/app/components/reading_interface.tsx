@@ -47,6 +47,36 @@ export default function ReadingInterface() {
     const [completed, setCompleted] = useState(false);
     const [accepted, setAccepted] = useState(false);
     const [readings, setReadings] = useState<(SensorReading | null)[]>([null, null, null]);
+    const [showPhWarning, setShowPhWarning] = useState(false);
+
+    const validateReadingValues = () => {
+        console.log('validateReadingValues called, readings:', readings);
+        
+        // Check for invalid pH values
+        const hasInvalidPh = readings.some(reading => {
+            if (reading) {
+                console.log(`Checking pH: ${reading.pH}, invalid: ${reading.pH < 0 || reading.pH > 14}`);
+                return reading.pH < 0 || reading.pH > 14;
+            }
+            return false;
+        });
+        console.log('hasInvalidPh:', hasInvalidPh);
+        
+        // Check for any negative readings
+        const hasNegativeValues = readings.some(reading => {
+            if (reading) {
+                const isNegative = reading.EC < 0 || reading.pH < 0 || reading.N < 0 || reading.P < 0 || reading.K < 0;
+                console.log(`Checking negative values for reading:`, reading, `isNegative: ${isNegative}`);
+                return isNegative;
+            }
+            return false;
+        });
+        console.log('hasNegativeValues:', hasNegativeValues);
+        
+        const shouldShowWarning = hasInvalidPh || hasNegativeValues;
+        console.log('shouldShowWarning:', shouldShowWarning);
+        setShowPhWarning(shouldShowWarning);
+    };
 
     // Timer effect (unchanged)
     useEffect(() => {
@@ -64,9 +94,18 @@ export default function ReadingInterface() {
             }
             setRunning(false);
             setCompleted(true);
+            console.log('Reading completed, will check pH values');
             return si;
         });
     }, [running, seconds]);
+
+    // Check pH values when readings are completed
+    useEffect(() => {
+        if (completed && !accepted) {
+            console.log('useEffect triggered: completed=', completed, 'accepted=', accepted);
+            validateReadingValues();
+        }
+    }, [completed, accepted, readings]);
 
     // Fetch when entering a reading stage (odd indices: 1, 3, 5)
     useEffect(() => {
@@ -92,6 +131,7 @@ export default function ReadingInterface() {
         setStageIndex(0);
         setSeconds(STAGE_DURATION);
         setReadings([null, null, null]);
+        setShowPhWarning(false);
         setRunning(true);
     }
 
@@ -101,6 +141,7 @@ export default function ReadingInterface() {
         setCompleted(false);
         setStageIndex(0);
         setSeconds(STAGE_DURATION);
+        setShowPhWarning(false);
     }
 
     function acceptReading(readings: (SensorReading | null)[]) {
@@ -165,6 +206,19 @@ export default function ReadingInterface() {
                     <DisplayReading potNumber={3} reading={readings[2]} showData={showData} />
                 </Box>
             </Box>
+            {showPhWarning && completed && !accepted && (
+                <Box style={{ 
+                    backgroundColor: '#ffebee', 
+                    border: '2px solid #f44336', 
+                    borderRadius: '8px', 
+                    padding: '16px', 
+                    textAlign: 'center' 
+                }}>
+                    <Typography color="error" variant="h6">
+                        ⚠️ Warning: Invalid sensor readings detected!
+                    </Typography>
+                </Box>
+            )}
             <ReadingTimer actionText={accepted ? 'Reading accepted' : actionText} seconds={running ? seconds : (completed ? 0 : seconds)} />
         </Box>
     );
