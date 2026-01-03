@@ -47,7 +47,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT TO_CHAR(MAX(time), 'YYYY-MM-DD HH24:MI:SS') as \"Last Reading\" FROM sensor_data WHERE plant_id = 'plant_02'",
+          "rawSql": "SELECT TO_CHAR(MAX(time), 'YYYY-MM-DD HH24:MI:SS') as \"Last Reading\" FROM sensor_data WHERE plant_id = 2",
           "refId": "A"
         }
       ],
@@ -84,7 +84,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(ec::numeric, 2) as ec FROM sensor_data WHERE plant_id = 'plant_02' AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 'plant_02')",
+          "rawSql": "SELECT ROUND(ec::numeric, 2) as ec FROM sensor_data WHERE plant_id = 2 AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 2)",
           "refId": "A"
         }
       ],
@@ -122,7 +122,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(ph::numeric, 2) as ph FROM sensor_data WHERE plant_id = 'plant_02' AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 'plant_02')",
+          "rawSql": "SELECT ROUND(ph::numeric, 2) as ph FROM sensor_data WHERE plant_id = 2 AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 2)",
           "refId": "A"
         }
       ],
@@ -159,7 +159,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(nitrogen::numeric, 2) as nitrogen FROM sensor_data WHERE plant_id = 'plant_02' AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 'plant_02')",
+          "rawSql": "SELECT ROUND(nitrogen::numeric, 2) as nitrogen FROM sensor_data WHERE plant_id = 2 AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 2)",
           "refId": "A"
         }
       ],
@@ -196,7 +196,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(phosphorus::numeric, 2) as phosphorus FROM sensor_data WHERE plant_id = 'plant_02' AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 'plant_02')",
+          "rawSql": "SELECT ROUND(phosphorus::numeric, 2) as phosphorus FROM sensor_data WHERE plant_id = 2 AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 2)",
           "refId": "A"
         }
       ],
@@ -233,7 +233,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(potassium::numeric, 2) as potassium FROM sensor_data WHERE plant_id = 'plant_02' AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 'plant_02')",
+          "rawSql": "SELECT ROUND(potassium::numeric, 2) as potassium FROM sensor_data WHERE plant_id = 2 AND time = (SELECT MAX(time) FROM sensor_data WHERE plant_id = 2)",
           "refId": "A"
         }
       ],
@@ -288,7 +288,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time AS \"time\", ec FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time AS \"time\", ec FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         }
       ],
@@ -344,7 +344,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time AS \"time\", ph FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time AS \"time\", ph FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         }
       ],
@@ -399,7 +399,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time AS \"time\", nitrogen FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time AS \"time\", nitrogen FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         }
       ],
@@ -454,7 +454,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time AS \"time\", phosphorus FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time AS \"time\", phosphorus FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         }
       ],
@@ -509,7 +509,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time AS \"time\", potassium FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time AS \"time\", potassium FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         }
       ],
@@ -543,7 +543,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT time, plant_id, ec, ph, nitrogen, phosphorus, potassium, array_to_string(array_remove(array[ CASE WHEN ec < 400 THEN 'EC low' ELSE NULL END, CASE WHEN ph < 5.5 THEN 'pH low' WHEN ph > 8.5 THEN 'pH high' ELSE NULL END, CASE WHEN nitrogen < 10 THEN 'N low' WHEN nitrogen > 30 THEN 'N high' ELSE NULL END, CASE WHEN phosphorus < 5 THEN 'P low' WHEN phosphorus > 15 THEN 'P high' ELSE NULL END, CASE WHEN potassium < 10 THEN 'K low' WHEN potassium > 30 THEN 'K high' ELSE NULL END ], NULL), ', ') AS issues FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) AND ( ec < 400 OR ph < 5.5 OR ph > 8.5 OR nitrogen < 10 OR nitrogen > 30 OR phosphorus < 5 OR phosphorus > 15 OR potassium < 10 OR potassium > 30 ) ORDER BY time DESC LIMIT 50",
+          "rawSql": "SELECT time, plant_id, ec, ph, nitrogen, phosphorus, potassium, array_to_string(array_remove(array[ CASE WHEN ec < 400 THEN 'EC low' ELSE NULL END, CASE WHEN ph < 5.5 THEN 'pH low' WHEN ph > 8.5 THEN 'pH high' ELSE NULL END, CASE WHEN nitrogen < 10 THEN 'N low' WHEN nitrogen > 30 THEN 'N high' ELSE NULL END, CASE WHEN phosphorus < 5 THEN 'P low' WHEN phosphorus > 15 THEN 'P high' ELSE NULL END, CASE WHEN potassium < 10 THEN 'K low' WHEN potassium > 30 THEN 'K high' ELSE NULL END ], NULL), ', ') AS issues FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) AND ( ec < 400 OR ph < 5.5 OR ph > 8.5 OR nitrogen < 10 OR nitrogen > 30 OR phosphorus < 5 OR phosphorus > 15 OR potassium < 10 OR potassium > 30 ) ORDER BY time DESC LIMIT 50",
           "refId": "A"
         }
       ],
@@ -553,7 +553,7 @@
   ],
   "schemaVersion": 42,
   "style": "dark",
-  "tags": ["soil", "sensors", "monitoring", "plant_02"],
+  "tags": ["soil", "sensors", "monitoring", "plant_2"],
   "templating": {"list": []},
   "time": {"from": "now-6h", "to": "now"},
   "timepicker": {},
