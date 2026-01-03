@@ -48,12 +48,12 @@ class PostgresDatabase(DatabaseInterface):
                 """
                 CREATE TABLE IF NOT EXISTS sensor_data (
                     time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                    plant_id TEXT NOT NULL,
-                    ec DOUBLE PRECISION,
-                    ph DOUBLE PRECISION,
-                    nitrogen DOUBLE PRECISION,
-                    phosphorus DOUBLE PRECISION,
-                    potassium DOUBLE PRECISION
+                    plant_id INTEGER NOT NULL,
+                    ec REAL,
+                    ph REAL,
+                    nitrogen REAL,
+                    phosphorus REAL,
+                    potassium REAL
                 );
                 """
             )
