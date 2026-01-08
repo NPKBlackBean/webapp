@@ -166,9 +166,9 @@
           "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
         },
         "overrides": [
-          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+          {"matcher": {"id": "byName", "options": "Plant 1"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 2"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 3"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
         ]
       },
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
@@ -183,7 +183,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, ec as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, ec as \"plant_01\" FROM sensor_data WHERE plant_id = 1 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         },
         {
@@ -191,7 +191,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, ec as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, ec as \"plant_02\" FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "B"
         },
         {
@@ -199,7 +199,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, ec as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, ec as \"plant_03\" FROM sensor_data WHERE plant_id = 3 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "C"
         }
       ],
@@ -234,9 +234,9 @@
           "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
         },
         "overrides": [
-          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+          {"matcher": {"id": "byName", "options": "Plant 1"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 2"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 3"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
         ]
       },
       "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
@@ -251,7 +251,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, ph as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, ph as \"plant_01\" FROM sensor_data WHERE plant_id = 1 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         },
         {
@@ -259,7 +259,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, ph as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, ph as \"plant_02\" FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "B"
         },
         {
@@ -267,7 +267,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, ph as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, ph as \"plant_03\" FROM sensor_data WHERE plant_id = 3 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "C"
         }
       ],
@@ -302,9 +302,9 @@
           "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
         },
         "overrides": [
-          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+          {"matcher": {"id": "byName", "options": "Plant 1"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 2"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 3"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
         ]
       },
       "gridPos": {"h": 8, "w": 8, "x": 0, "y": 20},
@@ -319,7 +319,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, nitrogen as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, nitrogen as \"plant_01\" FROM sensor_data WHERE plant_id = 1 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         },
         {
@@ -327,7 +327,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, nitrogen as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, nitrogen as \"plant_02\" FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "B"
         },
         {
@@ -335,7 +335,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, nitrogen as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, nitrogen as \"plant_03\" FROM sensor_data WHERE plant_id = 3 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "C"
         }
       ],
@@ -370,9 +370,9 @@
           "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
         },
         "overrides": [
-          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+          {"matcher": {"id": "byName", "options": "Plant 1"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 2"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 3"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
         ]
       },
       "gridPos": {"h": 8, "w": 8, "x": 8, "y": 20},
@@ -387,7 +387,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, phosphorus as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, phosphorus as \"plant_01\" FROM sensor_data WHERE plant_id = 1 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         },
         {
@@ -395,7 +395,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, phosphorus as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, phosphorus as \"plant_02\" FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "B"
         },
         {
@@ -403,7 +403,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, phosphorus as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, phosphorus as \"plant_03\" FROM sensor_data WHERE plant_id = 3 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "C"
         }
       ],
@@ -438,9 +438,9 @@
           "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}]}
         },
         "overrides": [
-          {"matcher": {"id": "byName", "options": "plant_01"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_02"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
-          {"matcher": {"id": "byName", "options": "plant_03"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
+          {"matcher": {"id": "byName", "options": "Plant 1"}, "properties": [{"id": "color", "value": {"fixedColor": "purple", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 2"}, "properties": [{"id": "color", "value": {"fixedColor": "blue", "mode": "fixed"}}]},
+          {"matcher": {"id": "byName", "options": "Plant 3"}, "properties": [{"id": "color", "value": {"fixedColor": "pink", "mode": "fixed"}}]}
         ]
       },
       "gridPos": {"h": 8, "w": 8, "x": 16, "y": 20},
@@ -455,7 +455,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, potassium as \"plant_01\" FROM sensor_data WHERE plant_id = 'plant_01' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, potassium as \"plant_01\" FROM sensor_data WHERE plant_id = 1 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "A"
         },
         {
@@ -463,7 +463,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, potassium as \"plant_02\" FROM sensor_data WHERE plant_id = 'plant_02' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, potassium as \"plant_02\" FROM sensor_data WHERE plant_id = 2 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "B"
         },
         {
@@ -471,7 +471,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT time, potassium as \"plant_03\" FROM sensor_data WHERE plant_id = 'plant_03' AND $__timeFilter(time) ORDER BY time ASC",
+          "rawSql": "SELECT time, potassium as \"plant_03\" FROM sensor_data WHERE plant_id = 3 AND $__timeFilter(time) ORDER BY time ASC",
           "refId": "C"
         }
       ],
