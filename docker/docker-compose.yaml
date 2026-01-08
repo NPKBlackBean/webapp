@@ -1,0 +1,78 @@
+services:
+  timescaledb:
+    networks:
+      - coolbeans_net
+    image: timescale/timescaledb:latest-pg16
+    container_name: timescaledb
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+      - ../database/init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    networks:
+      - coolbeans_net
+    ports:
+      - "${GRAFANA_PORT}:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ../database/docker/grafana/provisioning:/etc/grafana/provisioning
+      - ../database/docker/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - timescaledb
+    restart: unless-stopped
+
+  ros2:
+    build: ../submodules/devel
+    container_name: ros2
+    privileged: true
+    networks:
+      - coolbeans_net
+    ports:
+      - "${ROS2_PORT}:9090"
+    depends_on:
+      - grafana
+    restart: unless-stopped
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+
+  fastapi:
+    build: ../backend
+    container_name: fastapi
+    networks:
+      - coolbeans_net
+    ports:
+      - "${FASTAPI_PORT}:8000"
+    depends_on:
+      - ros2
+    restart: unless-stopped
+
+  react:
+    build: ../frontend
+    container_name: react
+    networks:
+      - coolbeans_net
+    ports:
+      - "${REACT_PORT}:3000"
+    depends_on:
+      - fastapi
+    restart: unless-stopped
+
+volumes:
+  timescale_data:
+  grafana_data:
+
+networks:
+  coolbeans_net:
+    driver: bridge
