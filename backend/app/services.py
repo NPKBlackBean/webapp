@@ -1,6 +1,7 @@
 import roslibpy  # type: ignore[import-untyped]
 from roslibpy import ServiceResponse
 import logging
+import os 
 
 from utils import REQ_SENSOR_NUMBER_TO_NAME
 from domain import SensorReading
@@ -12,7 +13,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-ros_client = roslibpy.Ros(host='ros2', port=9090)
+
+ROSBRIDGE_HOST = os.getenv("ROSBRIDGE_HOST", "host.docker.internal")
+ROSBRIDGE_PORT = int(os.getenv("ROSBRIDGE_PORT", "1153"))
+
+ros_client = roslibpy.Ros(host=ROSBRIDGE_HOST, port=ROSBRIDGE_PORT)
+
 db = PostgresDatabase()
 
 def get_sensor_reading() -> SensorReading:

@@ -25,12 +25,12 @@ interface SensorReading {
 }
 
 async function fetchSensorReading(): Promise<SensorReading> {
-    const response = await fetch("http://localhost:8000/sensor_reading");
+    const response = await fetch("http://192.168.1.13:8000/sensor_reading");
     return response.json();
 }
 
 async function putSensorReadings(readings: (SensorReading | null)[]): Promise<SensorReading> {
-    const response = await fetch("http://localhost:8000/accepted_readings", {
+    const response = await fetch("http://192.168.1.13:8000/accepted_readings", {
         method: "POST",
         body: JSON.stringify({ readings: readings }),
         headers: {

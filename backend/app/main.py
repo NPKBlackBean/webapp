@@ -31,7 +31,7 @@ async def root() -> dict[str, str]:
 @app.get("/backend_ip")
 async def backend_ip() -> dict[str, str]:
     backend_ip_address = get_ip_address()
-    return {"ip_address": backend_ip_address}
+    return {"ip_address": "192.168.1.13"}
 
 @app.get("/sensor_reading")
 async def sensor_reading() -> dict[str, float]:

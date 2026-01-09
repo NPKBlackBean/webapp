@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
 async function fetchBackendIP() {
-    const response = await fetch("http://fastapi:3000/backend_ip")
+    const response = await fetch("http://192,168.1.13:8000/backend_ip")
     return response.json()
 }
 

@@ -22,14 +22,17 @@ class DatabaseInterface(ABC):
 class PostgresDatabase(DatabaseInterface):
     def __init__(self):
         self.conn = None
-        config = get_pg_envvars()
+        config = get_pg_envvars() 
+
+
         self.params = {
-            "host": config["PGHOST"],
-            "port": config["POSTGRES_PORT"],
-            "dbname": config["POSTGRES_DB"],
-            "user": config["POSTGRES_USER"],
-            "password": config["POSTGRES_PASSWORD"],
+            "host": os.getenv("PGHOST", "timescaledb"),
+            "port": int(os.getenv("PGPORT", "5432")),
+            "dbname": os.getenv("PGDATABASE", os.getenv("POSTGRES_DB", "db")),
+            "user": os.getenv("PGUSER", os.getenv("POSTGRES_USER", "root")),
+            "password": os.getenv("PGPASSWORD", os.getenv("POSTGRES_PASSWORD", "root")),
         }
+
         sslmode = config.get("PGSSLMODE", "")
         if sslmode:
             self.params["sslmode"] = sslmode

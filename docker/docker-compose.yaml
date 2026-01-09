@@ -1,52 +1,36 @@
+version: "3.9"
+
 services:
   timescaledb:
-    networks:
-      - coolbeans_net
     image: timescale/timescaledb:latest-pg16
     container_name: timescaledb
-    ports:
-      - "${POSTGRES_PORT}:5432"
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
     volumes:
       - timescale_data:/var/lib/postgresql/data
-      - ../database/init:/docker-entrypoint-initdb.d
+    networks:
+      - coolbeans_net
+    ports:
+      - "5432:5432"
     restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: root
+      GF_SECURITY_ADMIN_PASSWORD: root
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - timescaledb
     networks:
       - coolbeans_net
     ports:
       - "${GRAFANA_PORT}:3000"
-    environment:
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ../database/docker/grafana/provisioning:/etc/grafana/provisioning
-      - ../database/docker/grafana/dashboards:/var/lib/grafana/dashboards
-    depends_on:
-      - timescaledb
     restart: unless-stopped
-
-  ros2:
-    build: ../submodules/devel
-    container_name: ros2
-    privileged: true
-    networks:
-      - coolbeans_net
-    ports:
-      - "${ROS2_PORT}:9090"
-    depends_on:
-      - grafana
-    restart: unless-stopped
-    devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
-
   fastapi:
     build: ../backend
     container_name: fastapi
@@ -55,9 +39,18 @@ services:
     ports:
       - "${FASTAPI_PORT}:8000"
     depends_on:
-      - ros2
-    restart: unless-stopped
-
+      - timescaledb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      PGHOST: timescaledb
+      PGPORT: "5432"
+      PGDATABASE: ${POSTGRES_DB}
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      ROSBRIDGE_HOST: host.docker.internal
+      ROSBRIDGE_PORT: "1153"
+    restart: "no"
   react:
     build: ../frontend
     container_name: react
@@ -76,3 +69,4 @@ volumes:
 networks:
   coolbeans_net:
     driver: bridge
+
