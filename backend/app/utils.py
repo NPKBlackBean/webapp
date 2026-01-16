@@ -10,8 +10,31 @@ REQ_SENSOR_NUMBER_TO_NAME = {
 }
 
 def get_pg_envvars() -> dict[str, str]:
-    config = dotenv_values("../database/docker/.env")
-    config["PGHOST"] = "localhost"
+    import os
+    
+    # Check environment variables first (prioritize CI/CD and explicit settings)
+    config = {
+        "POSTGRES_DB": os.getenv("POSTGRES_DB", ""),
+        "POSTGRES_USER": os.getenv("POSTGRES_USER", ""),
+        "POSTGRES_PASSWORD": os.getenv("POSTGRES_PASSWORD", ""),
+        "POSTGRES_PORT": os.getenv("POSTGRES_PORT", ""),
+        "PGHOST": os.getenv("PGHOST", "localhost"),
+        "PGSSLMODE": os.getenv("PGSSLMODE", ""),
+    }
+    
+    # Only fall back to .env file if environment variables are not set (local development)
+    if not any(config.values()):
+        try:
+            env_config = dotenv_values("../database/docker/.env")
+            for key in config.keys():
+                if not config[key] and key in env_config:
+                    config[key] = env_config[key]
+            # Always set localhost for local development
+            if not config["PGHOST"]:
+                config["PGHOST"] = "localhost"
+        except Exception:
+            # If .env file not found and no env vars, use defaults
+            pass
 
     return config  # type: ignore[return-value]
 
