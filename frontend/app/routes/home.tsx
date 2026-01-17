@@ -10,8 +10,8 @@ import Homepage from "../components/homepage";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Sensor Data Collection App" },
+    { name: "description", content: "An application to collect and analyze sensor data for soil quality monitoring." },
   ];
 }
 
