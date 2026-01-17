@@ -13,7 +13,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 ros_client = roslibpy.Ros(host='ros2', port=9090)
-db = PostgresDatabase()
+
+def _get_database():
+    """Get database instance lazily"""
+    return PostgresDatabase()
 
 def get_sensor_reading() -> SensorReading:
     """
@@ -47,6 +50,7 @@ def get_sensor_reading() -> SensorReading:
 
 def save_sensor_reading(plant_id: int, sensor_reading: SensorReading) -> None:
     try:
+        db = _get_database()
         db.save_reading(plant_id, sensor_reading)
     except RuntimeError as e:
         print(f"Error when saving to database: {e}")
