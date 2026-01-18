@@ -35,10 +35,14 @@ services:
 
   ros2:
 <<<<<<< HEAD
+<<<<<<< HEAD
     build: ../submodules/devel
 =======
     build: ../submodules/devel/docker
 >>>>>>> 9450595 (Add unified compose)
+=======
+    build: ../submodules/devel
+>>>>>>> ac9445a (Final changes to containerization)
     container_name: ros2
     privileged: true
     networks:
@@ -51,10 +55,13 @@ services:
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     volumes:
       - ../submodules/devel:/root/project
 >>>>>>> 9450595 (Add unified compose)
+=======
+>>>>>>> ac9445a (Final changes to containerization)
 
   fastapi:
     build: ../backend
