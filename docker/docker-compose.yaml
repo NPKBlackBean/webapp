@@ -34,7 +34,11 @@ services:
     restart: unless-stopped
 
   ros2:
+<<<<<<< HEAD
     build: ../submodules/devel
+=======
+    build: ../submodules/devel/docker
+>>>>>>> 9450595 (Add unified compose)
     container_name: ros2
     privileged: true
     networks:
@@ -46,6 +50,11 @@ services:
     restart: unless-stopped
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
+<<<<<<< HEAD
+=======
+    volumes:
+      - ../submodules/devel:/root/project
+>>>>>>> 9450595 (Add unified compose)
 
   fastapi:
     build: ../backend
