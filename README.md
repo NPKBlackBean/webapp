@@ -2,6 +2,7 @@
 ## Current
 ### Compose setup
 <<<<<<< HEAD
+<<<<<<< HEAD
 Example .env networking config:
 ```bash
 PGHOST=timescaledb
@@ -9,6 +10,11 @@ PGHOST=timescaledb
 Example .env port config:
 ```bash
 >>>>>>> ac9445a (Final changes to containerization)
+=======
+Example .env networking config:
+```bash
+PGHOST=timescaledb
+>>>>>>> 9e4e06e (Update fetching and connections to use Compose networking URIs)
 POSTGRES_PORT=1156
 GRAFANA_PORT=1155
 ROS2_PORT=1154
@@ -22,6 +28,9 @@ docker compose up -d ./docker
 ```
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9e4e06e (Update fetching and connections to use Compose networking URIs)
 #### Troubleshooting networking
 To understand why the frontend fetches from `http://fastapi:3000/backend_ip` or why the backend connects to 
 `host='ros2', port=9090`, or why in `.env` we have `PGHOST=timescaledb`, look to the 
@@ -29,8 +38,11 @@ To understand why the frontend fetches from `http://fastapi:3000/backend_ip` or 
 "... Each container can now look up the service name web or db and get back the appropriate container's IP address. 
 For example, web's application code could connect to the URL postgres://db:5432 and start using the Postgres database.."
 
+<<<<<<< HEAD
 =======
 >>>>>>> ac9445a (Final changes to containerization)
+=======
+>>>>>>> 9e4e06e (Update fetching and connections to use Compose networking URIs)
 ## Legacy
 ### Run the app
 1. Execute:
