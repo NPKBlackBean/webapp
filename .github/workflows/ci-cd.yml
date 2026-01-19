@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v5
 
@@ -62,12 +63,15 @@ jobs:
       - name: Verify TimescaleDB connection
         run: |
           cd database/docker
-          docker compose exec -T timescaledb psql -U ${{ vars.POSTGRES_USER }} -d ${{ vars.POSTGRES_DB }} -c "SELECT * FROM pg_extension WHERE extname='timescaledb';" || exit 1
+          docker compose exec -T timescaledb \
+            psql -U ${{ vars.POSTGRES_USER }} \
+                 -d ${{ vars.POSTGRES_DB }} \
+                 -c "SELECT * FROM pg_extension WHERE extname='timescaledb';"
 
       - name: Verify Grafana is running
         run: |
           cd database/docker
-          curl -s http://localhost:${GRAFANA_PORT}/api/health || exit 1
+          curl -sf http://localhost:${GRAFANA_PORT}/api/health
         env:
           GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
 
@@ -81,41 +85,48 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      
-      - name: Set up QEMU
+
+      - name: Set up QEMU (ARM emulation)
         uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64,arm
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push Backend Docker image
+      - name: Build and push ARM Backend image
         uses: docker/build-push-action@v5
         with:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
+          platforms: |
+            linux/arm64
+            linux/arm/v7
           tags: |
             kzmuda/coolbeans_backend:latest
             kzmuda/coolbeans_backend:${{ github.sha }}
-          platforms: linux/arm64,linux/arm/v8,linux/arm/v7
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
     runs-on: self-hosted
     needs: build
+
     steps:
       - uses: actions/checkout@v5
-      
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      
+
       - name: Pull latest docker images
         run: |
           docker pull kzmuda/coolbeans_frontend:latest
           docker pull kzmuda/coolbeans_backend:latest
-      
+
       - name: Stop existing services
         run: |
           cd docker
@@ -135,7 +146,6 @@ jobs:
       - name: Update docker-compose to use pushed images
         run: |
           cd docker
-          # Replace build contexts with published images for frontend and backend
           sed -i 's|build: ../frontend|image: kzmuda/coolbeans_frontend:latest|g' docker-compose.yaml
           sed -i 's|build: ../backend|image: kzmuda/coolbeans_backend:latest|g' docker-compose.yaml
 

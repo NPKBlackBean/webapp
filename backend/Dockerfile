@@ -1,19 +1,20 @@
-FROM python:3.13-slim
+FROM python:3.11-slim
 
-# Install system dependencies for psycopg2 and other packages
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Minimal system deps
 RUN apt-get update && apt-get install -y \
-    gcc \
-    libpq-dev \
-    libffi-dev \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . /backend
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-WORKDIR /backend
-
-# Install dependencies using pip (Debian has much better ARM wheel availability)
-RUN pip install --upgrade pip && \
-    pip install -e .
+COPY app ./app
 
 EXPOSE 8000
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
