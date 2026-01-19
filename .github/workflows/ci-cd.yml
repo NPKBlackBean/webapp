@@ -160,7 +160,7 @@ jobs:
 
       - name: Start Backend 
         run: |
-          docker run -p ${{ vars.FASTAPI_PORT }}:${{ vars.FASTAPI_PORT }} kzmuda/coolbeans_backend:latest
+          docker run -p 8000:8000 kzmuda/coolbeans_backend:latest
 
         env:
           POSTGRES_DB: ${{ vars.POSTGRES_DB }}
