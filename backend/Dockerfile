@@ -1,20 +1,18 @@
-FROM python:3.13-alpine
+FROM python:3.13-slim
 
-# Install system dependencies
-RUN apk add --no-cache \
+# Install system dependencies for psycopg2 and other packages
+RUN apt-get update && apt-get install -y \
     gcc \
-    musl-dev \
-    libffi-dev \
-    openssl-dev \
-    postgresql-dev
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . /backend
 
 WORKDIR /backend
 
-# Install dependencies using pip (better wheel availability for ARM)
+# Install dependencies using pip (Debian has much better ARM wheel availability)
 RUN pip install --upgrade pip && \
     pip install -e .
 
 EXPOSE 8000
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "-m", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
