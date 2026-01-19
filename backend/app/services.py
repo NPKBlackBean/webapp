@@ -13,14 +13,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 ros_client = roslibpy.Ros(host='ros2', port=9090)
-<<<<<<< HEAD
 
 def _get_database():
     """Get database instance lazily"""
     return PostgresDatabase()
-=======
-db = PostgresDatabase()
->>>>>>> 9e4e06e (Update fetching and connections to use Compose networking URIs)
 
 def get_sensor_reading() -> SensorReading:
     """
