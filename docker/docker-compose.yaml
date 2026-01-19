@@ -33,22 +33,32 @@ services:
       - timescaledb
     restart: unless-stopped
 
+  #ros2:
+    #build: ../submodules/devel
+    #container_name: ros2
+    #privileged: true
+    #networks:
+    #  - coolbeans_net
+    #ports:
+    #  - "${ROS2_PORT}:9090"
+    #depends_on:
+    #  - grafana
+    #restart: unless-stopped
+    #devices:
+    #  - "/dev/ttyUSB0:/dev/ttyUSB0"
+
   ros2:
-    build: ../submodules/devel
+    image: ros:humble
     container_name: ros2
-    privileged: true
     networks:
       - coolbeans_net
-    ports:
-      - "${ROS2_PORT}:9090"
-    depends_on:
-      - grafana
+    command: tail -f /dev/null
+    environment:
+      - ROS_DOMAIN_ID=0
     restart: unless-stopped
-    devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
 
   fastapi:
-    build: ../backend
+    image: kzmuda/coolbeans_backend:latest
     container_name: fastapi
     networks:
       - coolbeans_net
@@ -58,8 +68,9 @@ services:
       - ros2
     restart: unless-stopped
 
+
   react:
-    build: ../frontend
+    image: kzmuda/coolbeans_frontend:latest
     container_name: react
     networks:
       - coolbeans_net

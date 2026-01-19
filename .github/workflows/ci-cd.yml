@@ -1,0 +1,203 @@
+name: CoolBeans CI/CD pipeline
+
+on:
+  push:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          cd backend && pip install -e .[dev]
+
+      - name: Run tests
+        run: cd backend && python -m pytest
+        env:
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+          POSTGRES_HOST: localhost
+
+      - name: Validate docker-compose configuration
+        run: |
+          cd database/docker
+          docker compose config > /dev/null
+        env:
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+          GRAFANA_USER: ${{ vars.GRAFANA_USER }}
+          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
+          GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
+
+      - name: Start services
+        run: |
+          cd database/docker
+          docker compose up -d
+        env:
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+          GRAFANA_USER: ${{ vars.GRAFANA_USER }}
+          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
+          GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
+
+      - name: Wait for services to be ready
+        run: |
+          sleep 10
+          cd database/docker
+          docker compose logs
+
+      - name: Verify TimescaleDB connection
+        run: |
+          cd database/docker
+          docker compose exec -T timescaledb \
+            psql -U ${{ vars.POSTGRES_USER }} \
+                 -d ${{ vars.POSTGRES_DB }} \
+                 -c "SELECT * FROM pg_extension WHERE extname='timescaledb';"
+
+      - name: Verify Grafana is running
+        run: |
+          cd database/docker
+          curl -sf http://localhost:${GRAFANA_PORT}/api/health
+        env:
+          GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
+
+      - name: Stop services
+        run: |
+          cd database/docker
+          docker compose down
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./backend/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: |
+            kzmuda/coolbeans_backend:latest
+            kzmuda/coolbeans_backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: |
+            kzmuda/coolbeans_frontend:latest
+            kzmuda/coolbeans_frontend:${{ github.sha }}
+          build-args: |
+            VITE_API_URL=localhost:8000
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Ensure fastapi is installed
+        run: |
+          python -m pip install --upgrade pip --break-system-packages
+          pip install fastapi --break-system-packages
+          export PATH="$HOME/.local/bin:$PATH"
+          
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Remove images used by compose
+        run: |
+          cd docker
+          for img in $(docker compose config | grep 'image:' | awk '{print $2}'); do
+            docker rmi "$img" || true
+          done
+
+      - name: Pull latest images from compose
+        run: |
+          cd docker
+          docker compose pull
+
+      - name: Stop existing services
+        run: |
+          cd docker
+          docker compose down --remove-orphans || true
+        env:
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+          GRAFANA_USER: ${{ vars.GRAFANA_USER }}
+          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
+          GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
+          ROS2_PORT: ${{ vars.ROS2_PORT }}
+          FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
+          REACT_PORT: ${{ vars.REACT_PORT }}
+
+      - name: Deploy complete application stack
+        run: |
+          cd docker
+          docker compose up -d
+        env:
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+          GRAFANA_USER: ${{ vars.GRAFANA_USER }}
+          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
+          GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
+          ROS2_PORT: ${{ vars.ROS2_PORT }}
+          FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
+          REACT_PORT: ${{ vars.REACT_PORT }}
+
+      - name: Wait for services to be ready
+        run: |
+          sleep 30
+          cd docker
+          docker compose logs --tail=20
+          
+      - name: Verify all services are running
+        run: |
+          cd docker
+          services=$(docker compose config --services)
+          for s in $services; do
+            status=$(docker compose ps --services --filter "status=running" | grep -w $s || true)
+            if [ -z "$status" ]; then
+              echo "Service $s is NOT running!" >&2
+              docker compose ps
+              exit 1
+            else
+              echo "Service $s is running."
+            fi
+          done
