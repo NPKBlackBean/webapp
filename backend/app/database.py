@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 import os
 import psycopg2
 
-from domain import SensorReading
-from utils import get_pg_envvars
+from .domain import SensorReading
+from .utils import get_pg_envvars
 
 class DatabaseInterface(ABC):
 

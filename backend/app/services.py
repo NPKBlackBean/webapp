@@ -2,9 +2,9 @@ import roslibpy  # type: ignore[import-untyped]
 from roslibpy import ServiceResponse
 import logging
 
-from utils import REQ_SENSOR_NUMBER_TO_NAME
-from domain import SensorReading
-from database import PostgresDatabase
+from .utils import REQ_SENSOR_NUMBER_TO_NAME
+from .domain import SensorReading
+from .database import PostgresDatabase
 
 logging.basicConfig(
     level=logging.INFO,

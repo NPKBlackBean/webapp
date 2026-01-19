@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from dataclasses import asdict
 import logging
 
-from utils import get_ip_address
-from services import get_sensor_reading, save_sensor_reading
-from domain import SensorReading
+from .utils import get_ip_address
+from .services import get_sensor_reading, save_sensor_reading
+from .domain import SensorReading
 
 app = fastapi.FastAPI()
 logger = logging.getLogger(__name__)
