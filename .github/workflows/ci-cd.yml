@@ -107,6 +107,21 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Build and push ARM Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: |
+            kzmuda/coolbeans_frontend:latest
+            kzmuda/coolbeans_frontend:${{ github.sha }}
+          build-args: |
+            VITE_API_URL=localhost:8000
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   deploy:
     runs-on: self-hosted
     needs: build
