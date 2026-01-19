@@ -100,9 +100,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          platforms: |
-            linux/arm64
-            linux/arm/v7
+          platforms: linux/arm64
           tags: |
             kzmuda/coolbeans_backend:latest
             kzmuda/coolbeans_backend:${{ github.sha }}
