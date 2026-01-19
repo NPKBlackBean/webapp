@@ -1,4 +1,4 @@
-name: CoolBeans CI pipeline
+name: CoolBeans CI/CD pipeline
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
           POSTGRES_USER: ${{ vars.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
-          PGHOST: localhost
+          POSTGRES_HOST: localhost
 
       - name: Validate docker-compose configuration
         run: |
@@ -80,3 +80,49 @@ jobs:
           cd database/docker
           docker compose down
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            kzmuda/coolbeans_webapp:latest
+            kzmuda/coolbeans_webapp:${{ github.sha }}
+          platforms: linux/arm/v7
+          build-args: |
+            VITE_API_URL=localhost:8000
+
+  pull-image:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      
+      - name: Stop and remove old container
+        run: |
+          docker stop coolbeans_webapp || true
+          docker rm coolbeans_webapp || true
+      
+      - name: Remove old image
+        run: docker rmi kzmuda/coolbeans_webapp:latest || true
+      
+      - name: Pull latest docker image
+        run: docker pull kzmuda/coolbeans_webapp:latest
+
+      - name: Run container
+        run: |
+          docker run -d -p 8080:3000 --name coolbeans_webapp kzmuda/coolbeans_webapp:latest

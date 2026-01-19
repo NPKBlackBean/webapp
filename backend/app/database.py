@@ -22,21 +22,17 @@ class DatabaseInterface(ABC):
 class PostgresDatabase(DatabaseInterface):
     def __init__(self):
         self.conn = None
-        config = get_pg_envvars()
-        self.params = {
-            "host": config["PGHOST"],
-            "port": config["POSTGRES_PORT"],
-            "dbname": config["POSTGRES_DB"],
-            "user": config["POSTGRES_USER"],
-            "password": config["POSTGRES_PASSWORD"],
+        self.config = {
+            "host": os.getenv("POSTGRES_HOST", "localhost"),
+            "port": os.getenv("POSTGRES_PORT", "5432"),
+            "user": os.getenv("POSTGRES_USER", "postgres"),
+            "password": os.getenv("POSTGRES_PASSWORD", ""),
+            "database": os.getenv("POSTGRES_DB", "testdb"),
         }
-        sslmode = config.get("PGSSLMODE", "")
-        if sslmode:
-            self.params["sslmode"] = sslmode
 
     def connect(self):
         try:
-            self.conn = psycopg2.connect(**self.params)
+            self.conn = psycopg2.connect(**self.config)
             cur = self.conn.cursor()
             try:
                 cur.execute("CREATE EXTENSION IF NOT EXISTS timescaledb;")
@@ -64,7 +60,7 @@ class PostgresDatabase(DatabaseInterface):
             except psycopg2.Error as e:
                 self.conn.rollback()
                 print(e)
-            print(f"[DB] Connected to Postgres: {self.params.get('host')}:{self.params.get('port')}")
+            print(f"[DB] Connected to Postgres: {self.config.get('host')}:{self.config.get('port')}")
         except psycopg2.Error as e:
             print(f"[DB] Error connecting to Postgres: {e}")
 
