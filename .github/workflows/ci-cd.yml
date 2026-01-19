@@ -158,9 +158,10 @@ jobs:
           FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
           REACT_PORT: ${{ vars.REACT_PORT }}
 
-      - name: Start Backend 
+      - name: Start Backend and Frontend
         run: |
           docker run -p 8000:8000 kzmuda/coolbeans_backend:latest
+          docker run -p 3000:3000 kzmuda/coolbeans_frontend:latest
 
         env:
           POSTGRES_DB: ${{ vars.POSTGRES_DB }}
