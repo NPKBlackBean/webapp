@@ -1,11 +1,16 @@
-FROM ghcr.io/astral-sh/uv:alpine
+FROM python:3.13-slim
 
-COPY ./external/.env /database/docker/.env
-COPY . /backend
+# Install system dependencies for psycopg2
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY backend /backend
 
 WORKDIR /backend
 
-RUN ["uv", "sync"]
+RUN pip install -e . --break-system-packages
 
 EXPOSE 8000
-CMD ["uv", "run", "fastapi", "run", "app/main.py"]
+CMD ["fastapi", "run", "app/main.py", "--host", "0.0.0.0", "--port", "8000"]
