@@ -64,12 +64,14 @@ jobs:
           docker tag coolbeans_grafana:latest ${{ secrets.DOCKER_HUB_USERNAME }}/coolbeans_grafana:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/coolbeans_grafana:latest
         
-      - name: Build and push TimescaleDB image
+      - name: Build and push TimescaleDB image with init script
         run: |
-          cd database/docker/timescaledb
-          docker build -t coolbeans_timescaledb:latest .
+          docker build -t coolbeans_timescaledb:latest ./database/docker/timescaledb
           docker tag coolbeans_timescaledb:latest ${{ secrets.DOCKER_HUB_USERNAME }}/coolbeans_timescaledb:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/coolbeans_timescaledb:latest
+        # Make sure your Dockerfile in timescaledb includes:
+        # COPY init.sql /docker-entrypoint-initdb.d/
+        # And place your init.sql in ./database/docker/timescaledb
 
   deploy-grafana:
     needs: validate-grafana

@@ -8,8 +8,7 @@ datasources:
   - name: TimescaleDB
     type: postgres
     access: proxy
-    orgId: 1
-    url: timescaledb:5432
+    url: coolbeans_timescaledb:5432
     user: admin
     secureJsonData:
       password: "12345678"
