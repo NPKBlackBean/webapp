@@ -1,6 +1,6 @@
 FROM timescale/timescaledb:latest-pg16
 
-# Optional: Copy custom init scripts
-# COPY init.sql /docker-entrypoint-initdb.d/
+# Copy your initialization SQL script
+COPY sensor_data.sql /docker-entrypoint-initdb.d/sensor_data.sql
 
 EXPOSE 5432
