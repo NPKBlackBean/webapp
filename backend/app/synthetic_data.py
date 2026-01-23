@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from math import frexp
+
 import numpy as np
 import math
 import time
@@ -26,7 +28,50 @@ def initialize_db():
 
 def get_temp_reading(time_in_days: float, avg: float):
     """Return the temperature reading in degrees C"""
-    return (math.sin(2 * math.pi * time_in_days) + avg) #+ random.gauss(sigma=0.2)
+    x = time_in_days
+    return (math.sin(2 * math.pi * x) + avg) + random.gauss(sigma=0.1)
+
+def get_humidity_reading(time_in_days: float):
+    """Return the temperature reading in degrees C, whether watering took place"""
+    x = time_in_days % 1.0
+
+    if x < 16 / 17:
+        return -85 * x + 100
+    else:
+        return 1360 * x - 1260
+
+def get_ph_reading(time_in_days: float, avg):
+    return avg + random.gauss(sigma=0.1)
+
+def get_nutrient_reading(time_in_days: float, nutrient_type: str):
+    x = time_in_days % 7.0
+
+    fertilizer_added = False
+    if x >= (6.0 + 16 / 17):
+        fertilizer_added = True
+
+    proportion_p_to_n = 0.6
+    proportion_k_to_n = 2.0
+
+    if nutrient_type == "nitrogen":
+        if fertilizer_added:
+            return (505.25 * x - 3436.75) + random.gauss(sigma=0.1)
+        else:
+            return (75.95 * math.exp(-0.718 * x) + 24.05) + random.gauss(sigma=0.1)
+    elif nutrient_type == "phosphorus":
+        if fertilizer_added:
+            return (277.88 * x - 1885.16) + random.gauss(sigma=0.1 * proportion_p_to_n)
+        else:
+            return (45.46 * math.exp(-0.0643 * x) + 14.54) + random.gauss(sigma=0.1 * proportion_p_to_n)
+    elif nutrient_type == "potassium":
+        # todo: add high-potassium mode
+        if fertilizer_added:
+            return (394.89 * x - 2564.23) + random.gauss(sigma=0.1 * proportion_k_to_n)
+        else:
+            return (152.98 * math.exp(-0.02376 * x) + 47.02) + random.gauss(sigma=0.1 * proportion_k_to_n)
+    else:
+        raise ValueError(f"{nutrient_type} cannot be passed.")
+
 
 def run_experiment(plant_id, params):
     cur_dt = datetime(2025, 12, 1, 9, 00, 00)
@@ -35,8 +80,17 @@ def run_experiment(plant_id, params):
     # take reading every x mins
     sensor_resolution_mins = 5
     mins_passed = 0
+
     while cur_dt < end_dt:
-        temp_reading = get_temp_reading(time_in_days=mins_passed / (60 * 24), avg=26.0)
+        time_in_days = mins_passed / (60 * 24)
+        temp_reading = get_temp_reading(time_in_days, avg=26.0)
+        humidity_reading = get_humidity_reading(time_in_days)
+        ph_reading = get_ph_reading(time_in_days, avg=6.5)
+
+        nitrogen_reading = get_nutrient_reading(time_in_days, "nitrogen")
+        phosphorus_reading = get_nutrient_reading(time_in_days, "phosphorus")
+        potassium_reading = get_nutrient_reading(time_in_days, "potassium")
+
         print(cur_dt, temp_reading)
         time.sleep(0.1)
 
