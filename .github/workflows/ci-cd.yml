@@ -86,6 +86,37 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./backend/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: |
+            kzmuda/coolbeans_backend:latest
+            kzmuda/coolbeans_backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: |
+            kzmuda/coolbeans_frontend:latest
+            kzmuda/coolbeans_frontend:${{ github.sha }}
+          build-args: |
+            VITE_API_URL=localhost:8000
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   deploy:
     runs-on: self-hosted
     needs: build
@@ -93,6 +124,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Ensure fastapi is installed
+        run: |
+          python -m pip install --upgrade pip --break-system-packages
+          pip install fastapi --break-system-packages
+          export PATH="$HOME/.local/bin:$PATH"
+          
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -108,6 +145,10 @@ jobs:
           cd docker
           docker compose pull
 
+      - name: Pull latest docker images
+        run: |
+          docker pull kzmuda/coolbeans_frontend:latest
+          docker pull kzmuda/coolbeans_backend:latest
 
       - name: Stop existing services
         run: |
@@ -146,17 +187,3 @@ jobs:
           sleep 30
           cd docker
           docker compose logs --tail=20
-
-      # Move the Grafana deployment step here
-      - name: Deploy Grafana dashboards with grafanactl
-        env:
-          GRAFANA_SERVER: ${{ secrets.GRAFANA_SERVER }}
-          GRAFANA_STACK_ID: local-stack-id
-        run: |
-          if [ -d database/grafana/dashboards ]; then
-            echo "Grafana dashboards directory exists, deploying dashboards."
-            grafanactl resources push dashboards --path ./database/grafana/dashboards
-          else
-            echo "Grafana dashboards directory does not exist."
-            exit 1
-          fi
