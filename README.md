@@ -23,7 +23,14 @@ Ensure `ROS2_HOSTNAME` in `backend/external/.env` matches its counterpart in `do
 service name in `docker/docker-compose.yaml`.
 
 Checkout the external repo:
-`git`
+`git submodule add git@github.com:NPKBlackBean/devel.git submodules/devel`
+(Note: the above may or may not work, possibly commiting a submodule into our repo might take care of this - I wrote 
+this while manually setting up on RPi)
+
+(Note: this branch is what worked)
+`cd submodules/devel && git checkout rostest-initial`
+
+
 
 ```bash
 # if you're running tmux and want to see logs
