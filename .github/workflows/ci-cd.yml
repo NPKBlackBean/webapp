@@ -4,6 +4,7 @@ on:
   push:
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
 
@@ -136,15 +137,6 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-
-      - name: Prune unused Docker images
-        run: docker image prune -f
-
-      - name: Pull latest images from compose
-        run: |
-          cd docker
-          docker compose pull
-
       - name: Pull latest docker images
         run: |
           docker pull kzmuda/coolbeans_frontend:latest
@@ -166,10 +158,11 @@ jobs:
           FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
           REACT_PORT: ${{ vars.REACT_PORT }}
 
-      - name: Deploy complete application stack
+      - name: Start Backend and Frontend
         run: |
-          cd docker
-          docker compose up -d
+          docker run -p 8000:8000 kzmuda/coolbeans_backend:latest
+          docker run -p 3000:3000 kzmuda/coolbeans_frontend:latest
+
         env:
           POSTGRES_DB: ${{ vars.POSTGRES_DB }}
           POSTGRES_USER: ${{ vars.POSTGRES_USER }}

@@ -55,6 +55,16 @@ services:
       - fastapi
     restart: unless-stopped
 
+  ros2:
+    image: ros:humble
+    container_name: ros2
+    networks:
+      - coolbeans_net
+    command: tail -f /dev/null 
+    environment:
+      - ROS_DOMAIN_ID=0
+    restart: unless-stopped
+
 volumes:
   timescale_data:
   grafana_data:
