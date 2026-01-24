@@ -13,7 +13,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 ros2_envvars = get_ros2_envvars()
-ros_client = roslibpy.Ros(host=ros2_envvars["ROS2_HOSTNAME"], port=ros2_envvars["ROS2_PORT"])
+ros_client = roslibpy.Ros(host=ros2_envvars["ROS2_HOSTNAME"], port=int(ros2_envvars["ROS2_PORT"]))
 
 def _get_database():
     """Get database instance lazily"""
