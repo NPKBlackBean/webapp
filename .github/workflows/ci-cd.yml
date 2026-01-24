@@ -99,10 +99,15 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Pull latest docker images
+
+      - name: Prune unused Docker images
+        run: docker image prune -f
+
+      - name: Pull latest images from compose
         run: |
-          docker pull kzmuda/coolbeans_frontend:latest
-          docker pull kzmuda/coolbeans_backend:latest
+          cd docker
+          docker compose pull
+
 
       - name: Stop existing services
         run: |
@@ -119,12 +124,6 @@ jobs:
           ROS2_PORT: ${{ vars.ROS2_PORT }}
           FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
           REACT_PORT: ${{ vars.REACT_PORT }}
-
-      - name: Update docker-compose to use pushed images
-        run: |
-          cd docker
-          sed -i 's|build: ../frontend|image: kzmuda/coolbeans_frontend:latest|g' docker-compose.yaml
-          sed -i 's|build: ../backend|image: kzmuda/coolbeans_backend:latest|g' docker-compose.yaml
 
       - name: Deploy complete application stack
         run: |

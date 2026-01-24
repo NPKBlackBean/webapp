@@ -34,7 +34,7 @@ services:
     restart: unless-stopped
 
   fastapi:
-    build: ../backend
+    image: kingazm/coolbeans_backend:latest
     container_name: fastapi
     networks:
       - coolbeans_net
@@ -45,7 +45,7 @@ services:
     restart: unless-stopped
 
   react:
-    build: ../frontend
+    image: kingazm/coolbeans_frontend:latest
     container_name: react
     networks:
       - coolbeans_net
