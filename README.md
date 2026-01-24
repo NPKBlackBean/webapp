@@ -21,8 +21,15 @@ Ensure `PG_HOST` in `backend/external/.env` matches its counterpart in `docker/.
 Ensure `ROS2_PORT` in `backend/external/.env` matches its counterpart in `docker/.env`
 Ensure `ROS2_HOSTNAME` in `backend/external/.env` matches its counterpart in `docker/.env` and 
 service name in `docker/docker-compose.yaml`.
+
+Checkout the external repo:
+`git`
+
 ```bash
-docker compose up -d ./docker
+# if you're running tmux and want to see logs
+cd docker && docker compose up
+# if you're running a single terminal
+cd docker && docker compose up -d
 ```
 
 #### Troubleshooting networking
