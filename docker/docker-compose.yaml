@@ -48,14 +48,18 @@ services:
     #  - "/dev/ttyUSB0:/dev/ttyUSB0"
 
   ros2:
-    image: ros:humble
+    build: ../submodules/devel
     container_name: ros2
+    privileged: true
     networks:
       - coolbeans_net
-    command: tail -f /dev/null
-    environment:
-      - ROS_DOMAIN_ID=0
+    ports:
+      - "${ROS2_PORT}:9090"
+    depends_on:
+      - grafana
     restart: unless-stopped
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
 
   fastapi:
     image: kzmuda/coolbeans_backend:latest
