@@ -28,6 +28,14 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
           POSTGRES_HOST: localhost
+          GRAFANA_USER: ${{ vars.GRAFANA_USER }}
+          GRAFANA_PASSWORD: ${{ vars.GRAFANA_PASSWORD }}
+          GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
+          ROS2_PORT: ${{ vars.ROS2_PORT }}
+          FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
+          REACT_PORT: ${{ vars.REACT_PORT }}
+          ROS2_HOSTNAME: ${{ vars.ROS2_HOSTNAME }}
+          NODE_ENV: ${{ vars.NODE_ENV }}
 
       - name: Validate docker-compose configuration
         run: |
@@ -41,6 +49,11 @@ jobs:
           GRAFANA_USER: ${{ vars.GRAFANA_USER }}
           GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
           GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
+          ROS2_PORT: ${{ vars.ROS2_PORT }}
+          FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
+          REACT_PORT: ${{ vars.REACT_PORT }}
+          ROS2_HOSTNAME: ${{ vars.ROS2_HOSTNAME }}
+          NODE_ENV: ${{ vars.NODE_ENV }}
 
       - name: Start services
         run: |
@@ -54,6 +67,11 @@ jobs:
           GRAFANA_USER: ${{ vars.GRAFANA_USER }}
           GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
           GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
+          ROS2_PORT: ${{ vars.ROS2_PORT }}
+          FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
+          REACT_PORT: ${{ vars.REACT_PORT }}
+          ROS2_HOSTNAME: ${{ vars.ROS2_HOSTNAME }}
+          NODE_ENV: ${{ vars.NODE_ENV }}
 
       - name: Wait for services to be ready
         run: |
@@ -75,6 +93,9 @@ jobs:
           curl -sf http://localhost:${GRAFANA_PORT}/api/health
         env:
           GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
+          GRAFANA_USER: ${{ vars.GRAFANA_USER }}
+          GRAFANA_PASSWORD: ${{ vars.GRAFANA_PASSWORD }}
+          NODE_ENV: ${{ vars.NODE_ENV }}
 
       - name: Stop services
         run: |
@@ -159,11 +180,13 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
           GRAFANA_USER: ${{ vars.GRAFANA_USER }}
-          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
+          GRAFANA_PASSWORD: ${{ vars.GRAFANA_PASSWORD }}
           GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
           ROS2_PORT: ${{ vars.ROS2_PORT }}
           FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
           REACT_PORT: ${{ vars.REACT_PORT }}
+          ROS2_HOSTNAME: ${{ vars.ROS2_HOSTNAME }}
+          NODE_ENV: ${{ vars.NODE_ENV }}
 
       - name: Deploy complete application stack
         run: |
@@ -175,11 +198,13 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
           GRAFANA_USER: ${{ vars.GRAFANA_USER }}
-          GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
+          GRAFANA_PASSWORD: ${{ vars.GRAFANA_PASSWORD }}
           GRAFANA_PORT: ${{ vars.GRAFANA_PORT }}
           ROS2_PORT: ${{ vars.ROS2_PORT }}
           FASTAPI_PORT: ${{ vars.FASTAPI_PORT }}
           REACT_PORT: ${{ vars.REACT_PORT }}
+          ROS2_HOSTNAME: ${{ vars.ROS2_HOSTNAME }}
+          NODE_ENV: ${{ vars.NODE_ENV }}
 
       - name: Wait for services to be ready
         run: |
