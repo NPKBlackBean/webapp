@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Card, Button, Typography, Divider, Chip, Box } from '@mui/material';
 import ReadingTimer from './reading_timer';
 
+import { rpi_ip_address, backend_port } from "~/constants"
+
 const config = {
     units: {
         ec: import.meta.env.VITE_EC_UNIT,
@@ -25,12 +27,12 @@ interface SensorReading {
 }
 
 async function fetchSensorReading(): Promise<SensorReading> {
-    const response = await fetch("http://localhost:8000/sensor_reading");
+    const response = await fetch(`http://${rpi_ip_address}:${backend_port}/sensor_reading`);
     return response.json();
 }
 
 async function putSensorReadings(readings: (SensorReading | null)[]): Promise<SensorReading> {
-    const response = await fetch("http://localhost:8000/accepted_readings", {
+    const response = await fetch(`http://${rpi_ip_address}:${backend_port}/accepted_readings`, {
         method: "POST",
         body: JSON.stringify({ readings: readings }),
         headers: {

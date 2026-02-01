@@ -2,7 +2,7 @@ import roslibpy  # type: ignore[import-untyped]
 from roslibpy import ServiceResponse
 import logging
 
-from utils import REQ_SENSOR_NUMBER_TO_NAME
+from utils import REQ_SENSOR_NUMBER_TO_NAME, get_ros2_envvars
 from domain import SensorReading
 from database import PostgresDatabase
 
@@ -12,7 +12,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-ros_client = roslibpy.Ros(host='ros2', port=9090)
+ros2_envvars = get_ros2_envvars()
+ros_client = roslibpy.Ros(host=ros2_envvars["ROS2_HOSTNAME"], port=int(ros2_envvars["ROS2_PORT"]))
 
 def _get_database():
     """Get database instance lazily"""

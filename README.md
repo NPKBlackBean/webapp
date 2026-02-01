@@ -10,10 +10,33 @@ ROS2_PORT=1154
 FASTAPI_PORT=1153
 REACT_PORT=1152
 ```
-Ensure .env is placed in ./docker, look to docker-compose.yaml ${} interpolations or database, grafana docs to figure
-out what is needed; alternatively, look to the CI pipeline .yaml.
+Ensure .env is placed in ./docker.
+If you want to better understand what is going on, check the following places:
+- the docker-compose.yaml ${} interpolations,
+- our TimescaleDB, Grafana docs (README.md files),
+- the GH Actions CI pipeline .yaml.
+
+Ensure `FASTAPI_PORT` in `docker/.env` matches its counterpart in `frontend/.env`.
+Ensure `PG_HOST` in `backend/external/.env` matches its counterpart in `docker/.env`.
+Ensure `ROS2_PORT` in `backend/external/.env` matches its counterpart in `docker/.env`
+Ensure `ROS2_HOSTNAME` in `backend/external/.env` matches its counterpart in `docker/.env` and 
+service name in `docker/docker-compose.yaml`.
+
+Checkout the external repo:
+`git submodule add git@github.com:NPKBlackBean/devel.git submodules/devel`
+(Note: the above may or may not work, possibly commiting a submodule into our repo might take care of this - I wrote 
+this while manually setting up on RPi)
+
+(Note: this branch is what worked)
+`cd submodules/devel && git checkout rostest-initial`
+
+
+
 ```bash
-docker compose up -d ./docker
+# if you're running tmux and want to see logs
+cd docker && docker compose up
+# if you're running a single terminal
+cd docker && docker compose up -d
 ```
 
 #### Troubleshooting networking
