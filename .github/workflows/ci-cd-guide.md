@@ -61,7 +61,7 @@ To re-configure the runner, simply follow the `./config.sh (...)` part of the **
 
 ```bash
 Run cd docker
-unable to get image 'ros:humble': permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.51/images/ros:humble/json": dial unix /var/run/docker.sock: connect: permission denied
+unable to get image 'ros:rolling': permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.51/images/ros:rolling/json": dial unix /var/run/docker.sock: connect: permission denied
 ```
 
 Ensure you followed the granting permissions step of the docker set up on your Raspberry Pi, and that you did the reboot after before trying to use the runner.
