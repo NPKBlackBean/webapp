@@ -34,12 +34,8 @@ services:
     restart: unless-stopped
 
   ros2:
-<<<<<<< HEAD
     build:
       context: ../submodules/devel
-=======
-    build: ../submodules/devel
->>>>>>> main
     container_name: ros2
     privileged: true
     networks:
