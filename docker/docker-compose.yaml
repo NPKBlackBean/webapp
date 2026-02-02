@@ -33,22 +33,9 @@ services:
       - timescaledb
     restart: unless-stopped
 
-  #ros2:
-    #build: ../submodules/devel
-    #container_name: ros2
-    #privileged: true
-    #networks:
-    #  - coolbeans_net
-    #ports:
-    #  - "${ROS2_PORT}:9090"
-    #depends_on:
-    #  - grafana
-    #restart: unless-stopped
-    #devices:
-    #  - "/dev/ttyUSB0:/dev/ttyUSB0"
-
   ros2:
-    build: ../submodules/devel
+    build:
+      context: ../submodules/devel
     container_name: ros2
     privileged: true
     networks:

@@ -1,5 +1,8 @@
 name: CoolBeans CI/CD pipeline
 
+permissions:
+  contents: read
+
 on:
   push:
 
@@ -9,9 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+  
       - uses: actions/checkout@v5
         with:
+          token: ${{ secrets.SUBMODULE_TOKEN }}
           submodules: recursive
+
+      - name: Update submodules
+        run: git submodule update --init --recursive
+
+      - name: Checkout submodule branch
+        run: |
+          cd submodules/devel
+          git fetch origin rostest-initial
+          git checkout FETCH_HEAD
 
       - uses: actions/setup-python@v6
         with:
@@ -147,6 +161,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.SUBMODULE_TOKEN }}
+          submodules: recursive
+
+      - name: Update submodules
+        run: git submodule update --init --recursive
+
+      - name: Checkout submodule branch
+        run: |
+          cd submodules/devel
+          git fetch origin rostest-initial
+          git checkout FETCH_HEAD
 
       - name: Ensure fastapi is installed
         run: |
