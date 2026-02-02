@@ -8,8 +8,10 @@ import IconButton from '@mui/material/IconButton';
 // @ts-ignore
 import MenuIcon from '@mui/icons-material/Menu';
 
+import { rpi_ip_address, backend_port } from "~/constants"
+
 async function fetchBackendIP() {
-    const response = await fetch("http://fastapi:3000/backend_ip")
+    const response = await fetch(`http://${rpi_ip_address}:${backend_port}/backend_ip`)
     return response.json()
 }
 

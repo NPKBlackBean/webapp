@@ -1,4 +1,5 @@
 from dotenv import dotenv_values
+import os
 import socket
 
 REQ_SENSOR_NUMBER_TO_NAME = {
@@ -10,7 +11,6 @@ REQ_SENSOR_NUMBER_TO_NAME = {
 }
 
 def get_pg_envvars() -> dict[str, str]:
-    import os
     
     # Check environment variables first (prioritize CI/CD and explicit settings)
     config = {
@@ -25,7 +25,7 @@ def get_pg_envvars() -> dict[str, str]:
     # Only fall back to .env file if environment variables are not set (local development)
     if not any(config.values()):
         try:
-            env_config = dotenv_values("../database/docker/.env")
+            env_config = dotenv_values("/backend/external/.env")
             for key in config.keys():
                 if not config[key] and key in env_config:
                     config[key] = env_config[key]
@@ -37,6 +37,25 @@ def get_pg_envvars() -> dict[str, str]:
             pass
 
     return config  # type: ignore[return-value]
+
+def get_ros2_envvars() -> dict[str, str]:
+    config = {
+        "ROS2_HOSTNAME": os.getenv("ROS2_HOSTNAME", ""),
+        "ROS2_PORT": os.getenv("ROS2_PORT", ""),
+    }
+
+    # Only fall back to .env file if environment variables are not set (local development)
+    if not any(config.values()):
+        try:
+            env_config = dotenv_values("/backend/external/.env")
+            for key in config.keys():
+                if not config[key] and key in env_config:
+                    config[key] = env_config[key]
+        except Exception:
+            # If .env file not found and no env vars, use defaults
+            pass
+
+    return config
 
 def get_ip_address() -> str:
     hostname = socket.gethostname()

@@ -10,8 +10,17 @@ ROS2_PORT=1154
 FASTAPI_PORT=1153
 REACT_PORT=1152
 ```
-Ensure .env is placed in ./docker, look to docker-compose.yaml ${} interpolations or database, grafana docs to figure
-out what is needed; alternatively, look to the CI pipeline .yaml.
+Ensure .env is placed in ./docker.
+If you want to better understand what is going on, check the following places:
+- the docker-compose.yaml ${} interpolations,
+- our TimescaleDB, Grafana docs (README.md files),
+- the GH Actions CI pipeline .yaml.
+
+Ensure `FASTAPI_PORT` in `docker/.env` matches its counterpart in `frontend/.env`.
+Ensure `PG_HOST` in `backend/external/.env` matches its counterpart in `docker/.env`.
+Ensure `ROS2_PORT` in `backend/external/.env` matches its counterpart in `docker/.env`
+Ensure `ROS2_HOSTNAME` in `backend/external/.env` matches its counterpart in `docker/.env` and 
+service name in `docker/docker-compose.yaml`.
 ```bash
 docker compose up -d ./docker
 ```
