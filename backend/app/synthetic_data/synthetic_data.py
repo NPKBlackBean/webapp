@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
-from math import frexp
+from experiments import EXPERIMENT_SETUPS
 
-import numpy as np
 import math
 import time
 import random
@@ -32,24 +31,25 @@ def get_temp_reading(time_in_days: float, avg: float):
     return (math.sin(2 * math.pi * x) + avg) + random.gauss(sigma=0.1)
 
 def get_humidity_reading(time_in_days: float):
-    """Return the temperature reading in degrees C, whether watering took place"""
+    """Return the humidity reading, ranging from 0 to 100%"""
     x = time_in_days % 1.0
 
-    if x < 16 / 17:
+    if x < 16 / 17: # naturally drying
         return -85 * x + 100
-    else:
+    else: # just watered
         return 1360 * x - 1260
 
 def get_ph_reading(time_in_days: float, avg):
     return avg + random.gauss(sigma=0.1)
 
-def get_nutrient_reading(time_in_days: float, nutrient_type: str):
+def get_nutrient_reading(time_in_days: float, constant_offset: float, nutrient_type: str):
     x = time_in_days % 7.0
 
     fertilizer_added = False
-    if x >= (6.0 + 16 / 17):
+    if x >= (6.0 + 16 / 17): # fertilize once a week, after watering event
         fertilizer_added = True
 
+    # proportional noise
     proportion_p_to_n = 0.6
     proportion_k_to_n = 2.0
 
@@ -64,7 +64,6 @@ def get_nutrient_reading(time_in_days: float, nutrient_type: str):
         else:
             return (45.46 * math.exp(-0.0643 * x) + 14.54) + random.gauss(sigma=0.1 * proportion_p_to_n)
     elif nutrient_type == "potassium":
-        # todo: add high-potassium mode
         if fertilizer_added:
             return (394.89 * x - 2564.23) + random.gauss(sigma=0.1 * proportion_k_to_n)
         else:
@@ -83,13 +82,13 @@ def run_experiment(plant_id, params):
 
     while cur_dt < end_dt:
         time_in_days = mins_passed / (60 * 24)
-        temp_reading = get_temp_reading(time_in_days, avg=26.0)
+        temp_reading = get_temp_reading(time_in_days, avg=params["temp"])
         humidity_reading = get_humidity_reading(time_in_days)
-        ph_reading = get_ph_reading(time_in_days, avg=6.5)
+        ph_reading = get_ph_reading(time_in_days, avg=params["ph"])
 
-        nitrogen_reading = get_nutrient_reading(time_in_days, "nitrogen")
-        phosphorus_reading = get_nutrient_reading(time_in_days, "phosphorus")
-        potassium_reading = get_nutrient_reading(time_in_days, "potassium")
+        nitrogen_reading = get_nutrient_reading(time_in_days, params["nitrogen"], "nitrogen")
+        phosphorus_reading = get_nutrient_reading(time_in_days, params["phosphorus"], "phosphorus")
+        potassium_reading = get_nutrient_reading(time_in_days, params["potassium"], "potassium")
 
         print(cur_dt, temp_reading)
         time.sleep(0.1)
@@ -101,9 +100,17 @@ def main():
     random.seed(42)
     initialize_db()
 
-    experiment_params = [""]
-    for idx, params in enumerate(experiment_params):
-        run_experiment(idx + 1, params)
+    n_setups = len(EXPERIMENT_SETUPS.values()[0])
+
+    for i in range(n_setups):
+        experiment_params = {
+            "temp": EXPERIMENT_SETUPS["temp"][i],
+            "ph": EXPERIMENT_SETUPS["ph"][i],
+            "nitrogen": EXPERIMENT_SETUPS["nitrogen"][i],
+            "phosphorus": EXPERIMENT_SETUPS["potassium"][i],
+            "potassium": EXPERIMENT_SETUPS["potassium"][i]
+        }
+        run_experiment(i + 1, experiment_params)
 
 if __name__ == "__main__":
     main()
