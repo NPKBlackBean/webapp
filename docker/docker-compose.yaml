@@ -34,7 +34,8 @@ services:
     restart: unless-stopped
 
   ros2:
-    build: ../submodules/devel
+    build:
+      context: ../submodules/devel
     container_name: ros2
     privileged: true
     networks:
@@ -48,7 +49,7 @@ services:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
 
   fastapi:
-    build: ../backend
+    image: kzmuda/coolbeans_backend:latest
     container_name: fastapi
     networks:
       - coolbeans_net
@@ -58,8 +59,9 @@ services:
       - ros2
     restart: unless-stopped
 
+
   react:
-    build: ../frontend
+    image: kzmuda/coolbeans_frontend:latest
     container_name: react
     networks:
       - coolbeans_net

@@ -13,3 +13,6 @@ dependencies = [
     "types-psycopg2>=2.9.21.20251012",
     "python-dotenv>=1.2.1",
 ]
+
+[tool.setuptools.packages.find]
+include = ["app*", "external*"]
