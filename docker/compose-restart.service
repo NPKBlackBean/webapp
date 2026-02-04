@@ -1,0 +1,13 @@
+[Unit]
+Description=Restart Docker Compose services for CoolBeans
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/coolbeans/webapp/docker
+ExecStart=/usr/bin/docker-compose up -d
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target
