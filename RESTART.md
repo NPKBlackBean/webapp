@@ -6,6 +6,6 @@ Described script allows to easily restart the CoolBeans services (e.g. in case o
 
 ### Bash Script (Direct)
 ```bash
-cd /path/to/webapp
+cd /path/to/webapp #e.g. /home/$USER/actions-runner/_work/webapp/webapp
 ./restart-services.sh
 ```
