@@ -186,6 +186,12 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+      - name: Stop existing CoolBeans containers
+        run: |
+          for c in grafana ros2 timescaledb react fastapi; do
+            docker stop $c || true
+          done
+
       - name: Remove images used by compose
         run: |
           cd docker
