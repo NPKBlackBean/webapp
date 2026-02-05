@@ -135,9 +135,8 @@ jobs:
           context: .
           file: ./backend/Dockerfile
           push: true
-          platforms: linux/arm64
+          platforms: linux/arm64. linux/amd64
           tags: |
-            kzmuda/coolbeans_backend:latest
             kzmuda/coolbeans_backend:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -148,9 +147,8 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          platforms: linux/arm64
+          platforms: linux/arm64, linux/amd64
           tags: |
-            kzmuda/coolbeans_frontend:latest
             kzmuda/coolbeans_frontend:${{ github.sha }}
           build-args: |
             VITE_API_URL=localhost:8000
