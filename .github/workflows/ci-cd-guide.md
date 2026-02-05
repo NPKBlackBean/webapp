@@ -39,6 +39,9 @@ sudo usermod -aG docker $USER
 ```
 
 Reboot to make sure the changes propagate.
+```bash
+sudo reboot
+```
 
 ## Trigger the CI/CD workflow 
 Do it for the first time by making changes to the repository, or re-running previous runs.
