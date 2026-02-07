@@ -46,6 +46,14 @@ To understand why the frontend fetches from `http://fastapi:3000/backend_ip` or 
 "... Each container can now look up the service name web or db and get back the appropriate container's IP address. 
 For example, web's application code could connect to the URL postgres://db:5432 and start using the Postgres database.."
 
+### Synthetic data generation
+The reasoning used when creating the functions for synthetic data generation can be found within the project report.
+To generate a ~50 MB database containing synthetic data for 36 plants, run:
+```bash
+cd backend
+uv run python app/synthetic_data/synthetic_data.py
+```
+
 ## Legacy
 ### Run the app
 1. Execute:

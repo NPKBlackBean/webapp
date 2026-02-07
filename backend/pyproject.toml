@@ -12,6 +12,7 @@ dependencies = [
     "psycopg2-binary>=2.9.11",
     "types-psycopg2>=2.9.21.20251012",
     "python-dotenv>=1.2.1",
+    "numpy>=2.4.1",
 ]
 
 [tool.setuptools.packages.find]
