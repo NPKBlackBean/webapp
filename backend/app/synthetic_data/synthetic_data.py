@@ -10,11 +10,12 @@ db = sqlite3.connect('db.sqlite3')
 
 def initialize_db():
     cursor = db.cursor()
+    cursor.execute('DROP TABLE IF EXISTS plant_readings')
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS plant_readings(
-            plant_id INTEGER PRIMARY KEY,
+        CREATE TABLE plant_readings(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            plant_id INTEGER,
             datetime TIMESTAMP,
-            ec REAL,
             ph REAL,
             n REAL,
             p REAL,
@@ -34,7 +35,7 @@ def get_humidity_reading(time_in_days: float):
     """Return the humidity reading, ranging from 0 to 100%"""
     x = time_in_days % 1.0
 
-    if x < 16 / 17: # naturally drying
+    if x < 16 / 17: # soil naturally drying out
         return -85 * x + 100
     else: # just watered
         return 1360 * x - 1260
@@ -57,7 +58,7 @@ def get_nutrient_reading(time_in_days: float, constant_offset: float, nutrient_t
         if fertilizer_added:
             return (505.25 * x - 3436.75) + random.gauss(sigma=0.1)
         else:
-            return (75.95 * math.exp(-0.718 * x) + 24.05) + random.gauss(sigma=0.1)
+            return (75.95 * math.exp(-0.0718 * x) + 24.05) + random.gauss(sigma=0.1)
     elif nutrient_type == "phosphorus":
         if fertilizer_added:
             return (277.88 * x - 1885.16) + random.gauss(sigma=0.1 * proportion_p_to_n)
@@ -90,17 +91,26 @@ def run_experiment(plant_id, params):
         phosphorus_reading = get_nutrient_reading(time_in_days, params["phosphorus"], "phosphorus")
         potassium_reading = get_nutrient_reading(time_in_days, params["potassium"], "potassium")
 
-        print(cur_dt, temp_reading)
-        time.sleep(0.1)
+        # debug :)
+        # print(f"{cur_dt}  plant:{plant_id:<3d}  temp:{temp_reading:8.2f}  humidity:{humidity_reading:8.2f}  ph:{ph_reading:8.2f}")
+        # print(f"{cur_dt}  plant:{plant_id:<3d}     N:{nitrogen_reading:8.2f}  P:       {phosphorus_reading:8.2f}  K: {potassium_reading:8.2f}")
+        # print("------------------------------------------------------------------------")
+
+        db.execute(
+            'INSERT INTO plant_readings (plant_id, datetime, ph, n, p, k, temp, humidity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            (plant_id, cur_dt, ph_reading, nitrogen_reading, phosphorus_reading, potassium_reading, temp_reading, humidity_reading)
+        )
 
         cur_dt += timedelta(minutes=sensor_resolution_mins)
         mins_passed += sensor_resolution_mins
+
+    db.commit()
 
 def main():
     random.seed(42)
     initialize_db()
 
-    n_setups = len(EXPERIMENT_SETUPS.values()[0])
+    n_setups = len(EXPERIMENT_SETUPS["temp"])
 
     for i in range(n_setups):
         experiment_params = {
